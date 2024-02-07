@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -31,9 +32,18 @@ class Ticket extends Model
         'created_by',
         'assigned_by',
         'assignee_id',
+        'portal_type',
+        'role',
+        'report_type',
+        'email_subject',
+        'report_date',
+        'gpo_id',
+        'partner_ref_number',
+        'transaction_id',
+        'msisdn',
     ];
 
-    public function createdBy(): BelongsTo {
+    public function createdBy() {
       return $this->belongsTo(User::class);
     }
 

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTicketRequest;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
@@ -14,7 +16,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::all();
+        $tickets = Ticket::orderBy("created_at", 'desc')->get();
 
         return Inertia::render('Ticket', [
           'tickets' => $tickets
@@ -32,11 +34,18 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreTicketRequest $request)
     {
-        // TO DO: request validation
+        $payload = $request->validated();
+        $user = Auth::user();
 
-        Ticket::create($request->validated());
+        try {
+            $payload['created_by'] = $user->id;
+            
+            Ticket::create($payload);
+        } catch (\Exception $e) {
+            dd($e);
+        }
     }
 
     /**
