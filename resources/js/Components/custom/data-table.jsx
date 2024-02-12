@@ -24,6 +24,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination";
+
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
@@ -143,7 +153,24 @@ export function DataTable({ columns, data }) {
                 </Table>
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
+                <Pagination>
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious href="#" />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink href="#">1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext href="#" />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+
+                {/* <Button
                     variant="outline"
                     size="sm"
                     onClick={() => table.previousPage()}
@@ -158,7 +185,7 @@ export function DataTable({ columns, data }) {
                     disabled={!table.getCanNextPage()}
                 >
                     Next
-                </Button>
+                </Button> */}
             </div>
         </div>
     );

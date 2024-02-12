@@ -21,21 +21,21 @@ class Ticket extends Model
         'other_service',
         'issue_details',
         'device_type',
+        'device_model',
         'customer_mobile_number',
         'gpo_mobile_number',
         'biller_name',
         'biller_ref_number',
+        'freshdesk_ticket_number',
         'gpadala_ref_number',
         'transaction_amount',
         'transaction_datetime',
         'status',
         'created_by',
-        'assigned_by',
         'assignee_id',
         'portal_type',
-        'role',
+        'webtool_role',
         'report_type',
-        'email_subject',
         'report_date',
         'gpo_id',
         'partner_ref_number',
@@ -46,6 +46,8 @@ class Ticket extends Model
     public function createdBy() {
       return $this->belongsTo(User::class);
     }
+
+
 
     // TO DO: define other relationships
 }

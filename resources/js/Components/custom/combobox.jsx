@@ -17,9 +17,16 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 import { toLowerCaseUnderscoreSeparated } from "@/Utils/stringUtils";
 
-export function Combobox({ options, placeholder, name, onChange, value }) {
+export function Combobox({
+    options,
+    placeholder,
+    searchPlaceholder,
+    disabled,
+    name,
+    onChange,
+    value,
+}) {
     const [open, setOpen] = useState(false);
-    // const [value, setValue] = useState("");
 
     const displaySelected = () => {
         if (!value) {
@@ -34,13 +41,14 @@ export function Combobox({ options, placeholder, name, onChange, value }) {
     };
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} modal={true}>
             <PopoverTrigger asChild>
                 <Button
+                    disabled={disabled}
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="min-w-fit max-w-72 justify-between"
+                    className="min-w-fit justify-between"
                 >
                     {displaySelected()}
                     <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -49,12 +57,12 @@ export function Combobox({ options, placeholder, name, onChange, value }) {
             <PopoverContent className="min-w-fit max-w-72 px-0 py-1">
                 <Command>
                     <CommandInput
-                        placeholder={placeholder || "Search options"}
+                        placeholder={searchPlaceholder || "Search options"}
                         className="h-9 m-1"
                     />
-                    <CommandEmpty>Nothing found.</CommandEmpty>
-                    <CommandGroup>
-                        <ScrollArea className="h-52">
+                    <ScrollArea className="h-52 scroll-auto ">
+                        <CommandEmpty>Nothing found.</CommandEmpty>
+                        <CommandGroup>
                             {options.map((option) => (
                                 <CommandItem
                                     key={option.value}
@@ -77,8 +85,8 @@ export function Combobox({ options, placeholder, name, onChange, value }) {
                                     />
                                 </CommandItem>
                             ))}
-                        </ScrollArea>
-                    </CommandGroup>
+                        </CommandGroup>
+                    </ScrollArea>
                 </Command>
             </PopoverContent>
         </Popover>

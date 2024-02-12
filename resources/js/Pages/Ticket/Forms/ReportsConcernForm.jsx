@@ -12,9 +12,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import FormField from "@/Components/custom/form-field";
 import { Combobox } from "@/Components/custom/combobox";
-import { services } from "@/Constants/servicesConstant";
+import { services } from "@/Constants/gpoServiceConstants";
+import { REPORT_TYPE } from "@/Constants/reportConstants";
+import { useEffect, useState } from "react";
+import { FileDropzone } from "@/Components/custom/file-dropzone";
 
-export default function GpoAppConcernForm({
+export default function ReportsConcernForm({
     data,
     setData,
     errors,
@@ -33,7 +36,12 @@ export default function GpoAppConcernForm({
     //     errors.includes("biller_name") ||
     //     errors.includes("biller_ref_number");
 
-    console.log({ errors });
+    const [files, setFiles] = useState([]);
+
+    useEffect(() => {
+        // Make sure to revoke the file URIs to avoid memory leaks, will run on unmount
+        return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    }, []);
 
     return (
         <>
@@ -43,13 +51,10 @@ export default function GpoAppConcernForm({
                         <span>Details</span>
                     </TabsTrigger>
                     <TabsTrigger value="more-details">
-                        <span
-                        // className={
-                        //     moreDetailsTabHasErrors() ? "text-rose-600" : ""
-                        // }
-                        >
-                            More details
-                        </span>
+                        <span>More details</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="attachments">
+                        <span>Attachments</span>
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent
@@ -63,13 +68,14 @@ export default function GpoAppConcernForm({
                             htmlFor="report_type"
                             error={errors.report_type}
                             render={
-                                <Input
+                                <Combobox
                                     id="report_type"
+                                    name="report_type"
                                     value={data.report_type}
-                                    onChange={(e) => {
-                                        setData("report_type", e.target.value);
-                                        clearErrors("report_type");
-                                    }}
+                                    placeholder="Select report type"
+                                    searchPlaceholder="Enter report type name"
+                                    options={REPORT_TYPE}
+                                    onChange={setData}
                                 />
                             }
                         />
@@ -78,19 +84,23 @@ export default function GpoAppConcernForm({
                     <div className="align-top">
                         <FormField
                             required
-                            label="Email subject"
-                            htmlFor="email_subject"
-                            error={errors.email_subject}
+                            label="Report date"
+                            htmlFor="report_date"
+                            error={errors.report_date}
                             render={
                                 <Input
-                                    id="email_subject"
-                                    value={data.email_subject}
+                                    id="report_date"
+                                    type="date"
+                                    value={data.report_date}
                                     onChange={(e) => {
                                         setData(
-                                            "email_subject",
-                                            e.target.value
+                                            "report_date",
+                                            format(
+                                                new Date(e.target.value),
+                                                "yyyy-MM-dd"
+                                            )
                                         );
-                                        clearErrors("email_subject");
+                                        clearErrors("report_date");
                                     }}
                                 />
                             }
@@ -130,32 +140,6 @@ export default function GpoAppConcernForm({
                                             e.target.value
                                         );
                                         clearErrors("gpo_mobile_number");
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-
-                    <div className="align-top">
-                        <FormField
-                            required
-                            label="Report date"
-                            htmlFor="report_date"
-                            error={errors.report_date}
-                            render={
-                                <Input
-                                    id="report_date"
-                                    type="date"
-                                    value={data.report_date}
-                                    onChange={(e) => {
-                                        setData(
-                                            "report_date",
-                                            format(
-                                                new Date(e.target.value),
-                                                "yyyy-MM-dd"
-                                            )
-                                        );
-                                        clearErrors("report_date");
                                     }}
                                 />
                             }
@@ -306,6 +290,13 @@ export default function GpoAppConcernForm({
                             }
                         />
                     </div>
+                </TabsContent>
+
+                <TabsContent
+                    value="attachments"
+                    className="flex justify-center"
+                >
+                    <FileDropzone files={files} setFiles={setFiles} />
                 </TabsContent>
             </Tabs>
         </>

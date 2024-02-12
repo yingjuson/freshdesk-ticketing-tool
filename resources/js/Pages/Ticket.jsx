@@ -12,17 +12,6 @@ import {
     DialogTrigger,
     DialogClose,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 
 import {
     DropdownMenu,
@@ -45,92 +34,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { useState } from "react";
 import { DialogPortal } from "@radix-ui/react-dialog";
-import GpoAppConcernForm from "./Ticket/Forms/GpoAppConcernForm";
+import GpoAppServiceConcernForm from "./Ticket/Forms/GpoAppServiceConcernForm";
 import WebtoolConcernForm from "./Ticket/Forms/WebtoolConcernForm";
 import ReportsConcernForm from "./Ticket/Forms/ReportsConcernForm";
 
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/Components/ui/use-toast";
 import { DataTable } from "@/Components/custom/data-table";
 import { columns } from "@/Components/tickets-table-columns";
 
 import { Badge } from "@/components/ui/badge";
-
-const sampleData = [
-    {
-        id: "728ed52f",
-        amount: 100,
-        status: "pending",
-        email: "asd@example.com",
-    },
-    {
-        id: "728ed522",
-        amount: 100,
-        status: "pending",
-        email: "zxc@example.com",
-    },
-    {
-        id: "728ed33f",
-        amount: 100,
-        status: "completed",
-        email: "aas@example.com",
-    },
-    {
-        id: "728edw3f",
-        amount: 1040,
-        status: "backlog",
-        email: "cca@example.com",
-    },
-    {
-        id: "724222f",
-        amount: 10230,
-        status: "closed",
-        email: "asqw@example.com",
-    },
-    {
-        id: "728edzz2f",
-        amount: 100,
-        status: "pending",
-        email: "ggre@example.com",
-    },
-
-    {
-        id: "728edw3f",
-        amount: 1040,
-        status: "backlog",
-        email: "xw@example.com",
-    },
-    {
-        id: "724222f",
-        amount: 10230,
-        status: "closed",
-        email: "fgnfghn@example.com",
-    },
-    {
-        id: "728edzz2f",
-        amount: 100,
-        status: "pending",
-        email: "ghjghj@example.com",
-    },
-
-    {
-        id: "728edw3f",
-        amount: 1040,
-        status: "backlog",
-        email: "aqwwe@example.com",
-    },
-    {
-        id: "724222f",
-        amount: 10230,
-        status: "closed",
-        email: "asqwerw@example.com",
-    },
-    {
-        id: "728edzz2f",
-        amount: 100,
-        status: "pending",
-        email: "ttt@example.com",
-    },
-];
+import NonGpoServiceConcernForm from "./Ticket/Forms/NonGpoServiceConcernForm";
+import DataRequestConcernForm from "./Ticket/Forms/DataRequestConcernForm";
 
 export default function Ticket({ auth }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -151,24 +65,26 @@ export default function Ticket({ auth }) {
         gpo_mobile_number: "",
         biller_name: "",
         biller_ref_number: "",
+        device_type: "",
+        device_model: "",
         gpadala_ref_number: "",
         transaction_amount: "",
         transaction_datetime: "",
-        status: "backlog",
+        // status: "backlog",
         created_by: "",
-        assigned_by: "",
         assignee_id: "",
 
-        role: "",
+        webtool_role: "",
         portal_type: "",
 
         report_type: "",
-        email_subject: "",
         report_date: "",
         gpo_id: "",
         partner_ref_number: "",
         transaction_id: "",
         msisdn: "",
+
+        media: [],
     });
 
     const handleModalClose = () => {
@@ -206,29 +122,63 @@ export default function Ticket({ auth }) {
 
     const getForm = () => {
         switch (selectedConcern) {
-            case "gpo_app":
-                return <GpoAppConcernForm {...ticketForm} />;
+            case "gpo_app_service":
+                return <GpoAppServiceConcernForm {...ticketForm} />;
+            case "gpo_onboarding":
+            case "gpo_connection":
+                return (
+                    <NonGpoServiceConcernForm
+                        {...ticketForm}
+                        concern={selectedConcern}
+                    />
+                );
             case "webtool":
                 return <WebtoolConcernForm {...ticketForm} />;
-            case "reports":
+            case "inaccessible_report":
+            case "gpo_service_variance":
+            case "additional_recipient":
                 return <ReportsConcernForm {...ticketForm} />;
+            case "data_request":
+                return <DataRequestConcernForm {...ticketForm} />;
         }
     };
 
     const getBadge = () => {
         switch (selectedConcern) {
-            case "gpo_app":
-                return <Badge className="m-0">GPO App</Badge>;
+            case "gpo_app_service":
+                return <Badge className="m-0">GPO App Service</Badge>;
+            case "gpo_onboarding":
+                return <Badge className="m-0">GPO Onboarding</Badge>;
+            case "gpo_connection":
+                return <Badge className="m-0">GPO Connection</Badge>;
             case "webtool":
                 return (
                     <Badge className="m-0" variant="fuchsia">
                         Webtool
                     </Badge>
                 );
-            case "reports":
+            case "inaccessible_report":
                 return (
                     <Badge className="m-0" variant="success">
-                        Reports
+                        Inaccessible Report
+                    </Badge>
+                );
+            case "gpo_service_variance":
+                return (
+                    <Badge className="m-0" variant="success">
+                        GPO Service Variance
+                    </Badge>
+                );
+            case "additional_recipient":
+                return (
+                    <Badge className="m-0" variant="success">
+                        Additional Recipient
+                    </Badge>
+                );
+            case "data_request":
+                return (
+                    <Badge className="m-0" variant="amber">
+                        Data Request
                     </Badge>
                 );
         }
@@ -237,11 +187,11 @@ export default function Ticket({ auth }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Ticket
-                </h2>
-            }
+            // header={
+            //     <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+            //         Ticket
+            //     </h2>
+            // }
         >
             <Head title="Ticket" />
 
@@ -259,37 +209,64 @@ export default function Ticket({ auth }) {
                                         <Button>New Ticket</Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent
-                                        className="w-20 text-center"
+                                        className="w-30"
                                         onClick={handleConcernClick}
                                     >
                                         <DropdownMenuLabel disabled>
-                                            Concern
+                                            GPO App
                                         </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
+                                        {/* <DropdownMenuSeparator /> */}
                                         <DropdownMenuGroup>
-                                            <DropdownMenuItem
-                                                value="gpo_app"
-                                                className="justify-center"
-                                            >
-                                                GPO App
+                                            <DropdownMenuItem value="gpo_app_service">
+                                                Services
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                value="webtool"
-                                                className="justify-center"
-                                            >
+                                            <DropdownMenuItem value="gpo_onboarding">
+                                                Onboarding
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem value="gpo_connection">
+                                                Connection
+                                            </DropdownMenuItem>
+                                            {/* <DropdownMenuItem value="reports">
+                                                Reports
+                                            </DropdownMenuItem> */}
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel disabled>
+                                            Webtool
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem value="webtool">
                                                 Webtool
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                value="reports"
-                                                className="justify-center"
-                                            >
-                                                Reports
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel disabled>
+                                            Reports
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem value="inaccessible_report">
+                                                Inaccessible Report
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem value="gpo_service_variance">
+                                                GPO Service Variance
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem value="additional_recipient">
+                                                Additional Recipient
+                                            </DropdownMenuItem>
+                                        </DropdownMenuGroup>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuLabel disabled>
+                                            Others
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem value="data_request">
+                                                Data Request
                                             </DropdownMenuItem>
                                         </DropdownMenuGroup>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
-                                <DialogPortal className="h-[90vh]">
-                                    <DialogContent className="sm:max-w-[825px] p-4  min-h-[55vh] max-h-[85vh]">
+                                <DialogPortal>
+                                    <DialogContent className="sm:max-w-[825px] p-4 h-[85vh]">
                                         <form onSubmit={submit}>
                                             <DialogHeader>
                                                 <DialogTitle className="flex flex-row items-center gap-2">
@@ -304,17 +281,16 @@ export default function Ticket({ auth }) {
                                                 </div>
                                             </ScrollArea>
                                             <DialogFooter>
-                                                <DialogClose asChild>
-                                                    <Button
-                                                        type="button"
-                                                        variant="secondary"
-                                                        onClick={
-                                                            handleModalClose
-                                                        }
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                </DialogClose>
+                                                <Button
+                                                    type="button"
+                                                    variant="secondary"
+                                                    disabled={
+                                                        ticketForm.processing
+                                                    }
+                                                    onClick={handleModalClose}
+                                                >
+                                                    Cancel
+                                                </Button>
                                                 <Button
                                                     type="submit"
                                                     disabled={
@@ -329,11 +305,10 @@ export default function Ticket({ auth }) {
                                 </DialogPortal>
                             </Dialog>
 
-                            <div className="container mx-auto py-10">
+                            <div className="container mx-auto">
                                 <DataTable
                                     columns={columns}
-                                    // data={sampleData}
-                                    data={tickets}
+                                    data={tickets.data}
                                 />
                             </div>
                         </div>

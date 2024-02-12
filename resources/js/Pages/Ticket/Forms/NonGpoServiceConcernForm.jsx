@@ -12,13 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import FormField from "@/Components/custom/form-field";
 import { Combobox } from "@/Components/custom/combobox";
-import { services } from "@/Constants/servicesConstant";
+import { GPO_APP_SERVICES, services } from "@/Constants/gpoServiceConstants";
 
-export default function GpoAppConcernForm({
+export default function NonGpoServiceConcernForm({
     data,
     setData,
     errors,
     clearErrors,
+    concern,
 }) {
     // const detailsTabHasErrors =
     //     errors.includes("issue_details") || errors.includes("media");
@@ -32,8 +33,6 @@ export default function GpoAppConcernForm({
     //     errors.includes("transaction_datetime") ||
     //     errors.includes("biller_name") ||
     //     errors.includes("biller_ref_number");
-
-    console.log({ errors });
 
     return (
         <>
@@ -50,6 +49,9 @@ export default function GpoAppConcernForm({
                         >
                             More details
                         </span>
+                    </TabsTrigger>
+                    <TabsTrigger value="details">
+                        <span>Attachments</span>
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent
@@ -68,7 +70,8 @@ export default function GpoAppConcernForm({
                                         name="service_type"
                                         value={data.service_type}
                                         placeholder="Select a service"
-                                        options={services}
+                                        searchPlaceholder="Enter service name"
+                                        options={GPO_APP_SERVICES}
                                         onChange={setData}
                                     />
                                 }

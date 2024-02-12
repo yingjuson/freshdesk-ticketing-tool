@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'johndoe@test.com',
-            'password' => Hash::make('astrongpassword'),
+            'password' => Hash::make('temp1234'),
         ]);
     }
 }
