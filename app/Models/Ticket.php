@@ -18,10 +18,11 @@ class Ticket extends Model
     protected $fillable = [
         'concern_type',
         'service_type',
-        'other_service',
+        'subject',
         'issue_details',
         'device_type',
         'device_model',
+        'device_os_version',
         'customer_mobile_number',
         'gpo_mobile_number',
         'biller_name',
@@ -43,11 +44,12 @@ class Ticket extends Model
         'msisdn',
     ];
 
-    public function createdBy() {
-      return $this->belongsTo(User::class);
+    public function creator() {
+      return $this->belongsTo(User::class, 'created_by');
     }
 
-
-
-    // TO DO: define other relationships
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
+    }
 }

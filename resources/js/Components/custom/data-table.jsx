@@ -18,9 +18,18 @@ import {
 } from "@/components/ui/table";
 
 import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -36,8 +45,13 @@ import {
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { router, useForm } from "@inertiajs/react";
 
-export function DataTable({ columns, data }) {
+import FormField from "./form-field";
+import { FileExport } from "./file-export";
+
+export function DataTable({ columns, data, links: paginationLinks }) {
+    const [search, setSearch] = useState("");
     const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
     const [columnVisibility, setColumnVisibility] = useState({});
@@ -47,31 +61,33 @@ export function DataTable({ columns, data }) {
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        getSortedRowModel: getSortedRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-        },
+        // onSortingChange: setSorting,
+        // getSortedRowModel: getSortedRowModel(),
+        // onColumnFiltersChange: setColumnFilters,
+        // getFilteredRowModel: getFilteredRowModel(),
+        // onColumnVisibilityChange: setColumnVisibility,
+        // state: {
+        //     sorting,
+        //     columnFilters,
+        //     columnVisibility,
+        // },
     });
 
     return (
         <div>
             <div className="flex items-center py-4">
-                {/* <Input
-                    placeholder="Filter emails..."
-                    value={table.getColumn("email")?.getFilterValue() ?? ""}
+                <Input
+                    placeholder="Enter search keywords"
                     onChange={(event) =>
-                        table
-                            .getColumn("email")
-                            ?.setFilterValue(event.target.value)
+                        router.get(
+                            route("tickets.index"),
+                            { search: event.target.value },
+                            { preserveState: true, replace: true }
+                        )
                     }
-                    className="max-w-sm"
-                /> */}
+                    className="w-56"
+                />
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
@@ -98,7 +114,11 @@ export function DataTable({ columns, data }) {
                             })}
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                <FileExport />
             </div>
+
+            {/* Main table */}
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -152,40 +172,46 @@ export function DataTable({ columns, data }) {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Pagination */}
             <div className="flex items-center justify-end space-x-2 py-4">
                 <Pagination>
                     <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious href="#" />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink href="#">1</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext href="#" />
-                        </PaginationItem>
+                        {paginationLinks.map((paginationLink, index) => {
+                            if (index === 0) {
+                                return (
+                                    <PaginationPrevious
+                                        key={index}
+                                        preserveState
+                                        href={paginationLink.url}
+                                        disabled={!paginationLink.url}
+                                    />
+                                );
+                            }
+
+                            if (index === paginationLinks.length - 1) {
+                                return (
+                                    <PaginationNext
+                                        key={index}
+                                        preserveState
+                                        href={paginationLink.url}
+                                        disabled={!paginationLink.url}
+                                    />
+                                );
+                            }
+
+                            return (
+                                <PaginationLink
+                                    key={index}
+                                    preserveState
+                                    href={paginationLink.url}
+                                >
+                                    {paginationLink.label}
+                                </PaginationLink>
+                            );
+                        })}
                     </PaginationContent>
                 </Pagination>
-
-                {/* <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button> */}
             </div>
         </div>
     );

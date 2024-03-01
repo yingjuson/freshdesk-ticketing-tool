@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('concern_type');
             $table->string('service_type')->nullable();
-            $table->string('other_service')->nullable();
+            $table->string('subject');
             $table->text('issue_details');
             $table->enum('device_type', ['ios', 'android'])->nullable();
             $table->string('device_model')->nullable();
+            $table->string('device_os_version')->nullable();
             $table->string('customer_mobile_number')->nullable();
             $table->string('gpo_mobile_number')->nullable();
             $table->string('biller_name')->nullable();
@@ -36,7 +37,7 @@ return new class extends Migration
             $table->string('report_type')->nullable();
             $table->string('gpo_id')->nullable();
             $table->string('partner_ref_number')->nullable();
-            $table->string('transaction_id')->nullable();
+            $table->string('ext_transaction_id')->nullable();
             $table->string('msisdn')->nullable();
             $table->string('report_date')->nullable();
             $table->string('portal_type')->nullable();

@@ -49,10 +49,6 @@ export const CSX_PORTAL_ROLES = [
         value: "approver",
         label: "Approver",
     },
-    {
-        value: "admin",
-        label: "Admin",
-    },
 ];
 
 export const FINANCE_PORTAL_ROLES = [

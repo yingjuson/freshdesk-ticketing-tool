@@ -80,5 +80,30 @@ export default {
         },
     },
 
-    plugins: [forms, require("tailwindcss-animate")],
+    plugins: [
+        forms,
+        require("tailwindcss-animate"),
+        function ({ addVariant }) {
+            addVariant("child-input", "& > input");
+            addVariant("child-input-hover", "& > input:hover");
+            addVariant("child-input-focus", "& > input:focus");
+            addVariant("child-input-focus-visible", "& > input:focus-visible");
+
+            addVariant("child-button", "& > button");
+            addVariant("child-button-hover", "& > button:hover");
+            addVariant("child-button-focus", "& > button:focus");
+            addVariant(
+                "child-button-focus-visible",
+                "& > button:focus-visible"
+            );
+
+            addVariant("child-textarea", "& > textarea");
+            addVariant("child-textarea-hover", "& > textarea:hover");
+            addVariant("child-textarea-focus", "& > textarea:focus");
+            addVariant(
+                "child-textarea-focus-visible",
+                "& > textarea:focus-visible"
+            );
+        },
+    ],
 };

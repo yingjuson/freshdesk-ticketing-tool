@@ -15,9 +15,8 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "../ui/scroll-area";
-import { toLowerCaseUnderscoreSeparated } from "@/Utils/stringUtils";
 
-export function Combobox({
+export const Combobox = ({
     options,
     placeholder,
     searchPlaceholder,
@@ -25,17 +24,15 @@ export function Combobox({
     name,
     onChange,
     value,
-}) {
+    className,
+    editabledisplaymode = false,
+}) => {
     const [open, setOpen] = useState(false);
 
     const displaySelected = () => {
-        if (!value) {
-            return placeholder;
-        }
+        if (!value) return placeholder;
 
-        const selectedOption = options.find(
-            (option) => toLowerCaseUnderscoreSeparated(option.label) === value
-        );
+        const selectedOption = options.find((option) => option.value === value);
 
         return selectedOption?.label;
     };
@@ -48,10 +45,23 @@ export function Combobox({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="min-w-fit justify-between"
+                    className={cn(
+                        "justify-between font-normal",
+                        editabledisplaymode &&
+                            "group p-1 border-transparent hover:border-solid hover:border-gray-200 shadow-none",
+                        className
+                    )}
                 >
-                    {displaySelected()}
-                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    <p className="text-ellipsis overflow-hidden">
+                        {displaySelected()}
+                    </p>
+                    <CaretSortIcon
+                        className={cn(
+                            "ml-2 h-4 w-4 shrink-0 opacity-50",
+                            editabledisplaymode &&
+                                "opacity-0 transition-opacity group-hover:opacity-50 group-active:opacity-50 group-focus:opacity-50"
+                        )}
+                    />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="min-w-fit max-w-72 px-0 py-1">
@@ -66,9 +76,7 @@ export function Combobox({
                             {options.map((option) => (
                                 <CommandItem
                                     key={option.value}
-                                    value={toLowerCaseUnderscoreSeparated(
-                                        option.label
-                                    )}
+                                    value={option.value}
                                     onSelect={(currentValue) => {
                                         onChange(name, currentValue);
                                         setOpen(false);
@@ -91,4 +99,4 @@ export function Combobox({
             </PopoverContent>
         </Popover>
     );
-}
+};

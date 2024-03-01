@@ -1,12 +1,13 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { Upload, X, XCircle } from "lucide-react";
+import { Upload, Info, XCircle } from "lucide-react";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 import { cn } from "@/lib/utils";
 import { formatByteUnits } from "@/Utils/fileUtils";
 import PdfSvg from "../../../assets/pdf-svg.png";
+import { TooltipIcon } from "./tooltip-icon";
 
 const getThumbnail = (file) => {
     switch (file.type) {
@@ -57,22 +58,16 @@ const getThumbnail = (file) => {
 };
 
 export const FileDropzone = ({ className, files, setFiles }) => {
-    // const [files, setFiles] = useState([]);
-
-    // useEffect(() => {
-    //     // Make sure to revoke the file URIs to avoid memory leaks, will run on unmount
-    //     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    // }, []);
-
     const onDrop = useCallback((acceptedFiles) => {
-        // Do something with the files
-        console.log({ acceptedFiles });
+        // add preview property to each file
         if (acceptedFiles?.length > 0) {
             setFiles((prevFiles) => [
                 ...prevFiles,
-                ...acceptedFiles.map((file) =>
-                    Object.assign(file, { preview: URL.createObjectURL(file) })
-                ),
+                ...acceptedFiles.map((file) => {
+                    return Object.assign(file, {
+                        preview: URL.createObjectURL(file),
+                    });
+                }),
             ]);
         }
     }, []);
@@ -94,11 +89,11 @@ export const FileDropzone = ({ className, files, setFiles }) => {
     });
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full items-center">
             <div
                 {...getRootProps({
                     className: cn(
-                        "w-full h-14 p-4 border-2 border-dashed border-gray-300 rounded-lg flex justify-center items-center gap-3",
+                        "w-3/4 h-14 p-4 border-2 border-dashed border-gray-300 rounded-lg flex justify-center items-center gap-3",
                         className
                     ),
                 })}
@@ -106,20 +101,23 @@ export const FileDropzone = ({ className, files, setFiles }) => {
                 <input {...getInputProps()} />
 
                 <>
-                    <Upload color="#9CA3AF" size="20" />
-                    <p className="text-gray-600">
+                    <Upload color="#9CA3AF" size="16" />
+                    <p className="text-sm text-center text-gray-600">
                         Drag and drop files here or click to select files
                     </p>
                 </>
             </div>
-            <p className="text-sm text-gray-400 font-thin mt-1">
-                Accepted file types: .jpg, .jpeg, .png, .pdf, .mp4
-            </p>
+            <div className="flex items-center gap-1 mt-1">
+                <p className="text-xs text-gray-400 font-thin">
+                    Accepted file types
+                </p>
+                <TooltipIcon
+                    icon={<Info size="16" color="blue" strokeWidth={2.5} />}
+                    content=".jpg .jpeg .png .pdf .mp4" // TO DO: add more
+                />
+            </div>
 
-            <div
-                id="thumbs"
-                className="my-4 mx-2 grid grid-cols-3 gap-4 h-[300px]"
-            >
+            <div id="thumbs" className="my-4 mx-2 flex flex-wrap gap-2 h-full">
                 {files.map((file, index) => (
                     <div
                         key={`${index}-${file.name}`}

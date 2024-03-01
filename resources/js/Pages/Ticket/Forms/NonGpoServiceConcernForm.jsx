@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import FormField from "@/Components/custom/form-field";
 import { Combobox } from "@/Components/custom/combobox";
-import { GPO_APP_SERVICES, services } from "@/Constants/gpoServiceConstants";
+import { GPO_APP_SERVICES } from "@/Constants/gpo-app-constants";
 
 export default function NonGpoServiceConcernForm({
     data,
@@ -21,19 +21,6 @@ export default function NonGpoServiceConcernForm({
     clearErrors,
     concern,
 }) {
-    // const detailsTabHasErrors =
-    //     errors.includes("issue_details") || errors.includes("media");
-
-    // const moreDetailsTabHasErrors =
-    //     errors.includes("service_type") ||
-    //     errors.includes("other_service") ||
-    //     errors.includes("gpo_mobile_number") ||
-    //     errors.includes("device_type") ||
-    //     errors.includes("transaction_amount") ||
-    //     errors.includes("transaction_datetime") ||
-    //     errors.includes("biller_name") ||
-    //     errors.includes("biller_ref_number");
-
     return (
         <>
             <Tabs defaultValue="details" className="w-full h-full">
@@ -44,7 +31,7 @@ export default function NonGpoServiceConcernForm({
                     <TabsTrigger value="more-details">
                         <span
                         // className={
-                        //     moreDetailsTabHasErrors() ? "text-rose-600" : ""
+                        //     moreDetailsTabHasErrors() ? "text-rose-700" : ""
                         // }
                         >
                             More details
