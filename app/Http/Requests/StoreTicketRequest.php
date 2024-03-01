@@ -29,9 +29,6 @@ class StoreTicketRequest extends FormRequest
             
             'webtool_role.required' => 'Role is required',
             'issue_details.required' => 'This field is required',
-            'msisdn.required' => 'This field is required if Partner reference no. and Transaction ID are empty',
-            'transaction_id.required' => 'This field is required if Partner reference no. and Transaction ID are empty',
-            'partner_ref_number.required' => 'This field is required if Partner reference no. and Transaction ID are empty',
 
             'gpo_mobile_number.required' => 'GPO mobile number is required',
             'transaction_datetime.required' => 'Transaction date and time is required',
@@ -41,10 +38,6 @@ class StoreTicketRequest extends FormRequest
             'gpadala_ref_number.required_if' => 'GPadala reference number is required',
             'transaction_datetime.required_if' => 'Transaction date and time is required',
             'customer_mobile_number.required_if' => 'Affected customer mobile number is required',
-
-            // 'msisdn.required_without_all' => 'This field is required if Partner reference no. and Transaction ID are empty',
-            // 'transaction_id.required_without_all' => 'This field is required if Partner reference no. and MSISDN are empty',
-            // 'partner_ref_number.required_without_all' => 'This field is required if Transaction ID and MSISDN are empty',
         ];
     }
 
@@ -115,9 +108,7 @@ class StoreTicketRequest extends FormRequest
             'report_date'               => ['string', Rule::requiredIf(in_array(request()->get('concern_type'), $reports_related_concerns) && request()->get('concern_type') !== 'additional_recipient'), 'nullable'],
             'gpo_id'                    => ['required_if:concern_type,gpo_service_variance', 'string', 'nullable'],
 
-            'transaction_id'            => [Rule::requiredIf(request()->get('concern_type') == 'gpo_service_variance' && !request()->get('partner_ref_number') && !request()->get('msisdn')), 'string', 'nullable'],
-            'partner_ref_number'        => [Rule::requiredIf(request()->get('concern_type') == 'gpo_service_variance' && !request()->get('transaction_id') && !request()->get('msisdn')), 'string', 'nullable'],
-            'msisdn'                    => [Rule::requiredIf(request()->get('concern_type') == 'gpo_service_variance' && !request()->get('transaction_id') && !request()->get('partner_ref_number')), 'string', 'nullable'],
+            'ext_transaction_id'        => ['required_if:concern_type,gpo_service_variance', 'string', 'nullable'],
 
             'attachments.*'             => [File::types(['png', 'jpg', 'jpeg', 'pdf', 'mp4']), 'nullable']
         ];

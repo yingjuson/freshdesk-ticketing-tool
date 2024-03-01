@@ -36,9 +36,7 @@ return new class extends Migration
             ])->default('new');
             $table->string('report_type')->nullable();
             $table->string('gpo_id')->nullable();
-            $table->string('partner_ref_number')->nullable();
             $table->string('ext_transaction_id')->nullable();
-            $table->string('msisdn')->nullable();
             $table->string('report_date')->nullable();
             $table->string('portal_type')->nullable();
             $table->string('webtool_role')->nullable();

@@ -177,61 +177,21 @@ export default function ReportsConcernForm({
 
                     <div className="align-top min-h-20">
                         <FormField
-                            label="Partner reference number"
-                            htmlFor="partner_ref_number"
-                            error={errors.partner_ref_number}
+                            required
+                            label="External Transaction ID"
+                            htmlFor="ext_transaction_id"
+                            error={errors.ext_transaction_id}
                             render={
                                 <Input
-                                    id="partner_ref_number"
-                                    value={data.partner_ref_number}
+                                    id="ext_transaction_id"
+                                    value={data.ext_transaction_id}
                                     editabledisplaymode={editMode}
                                     onChange={(e) => {
                                         setData(
-                                            "partner_ref_number",
+                                            "ext_transaction_id",
                                             e.target.value
                                         );
-                                        clearErrors("partner_ref_number");
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-
-                    <div className="align-top min-h-20">
-                        <FormField
-                            label="Transaction ID"
-                            htmlFor="transaction_id"
-                            error={errors.transaction_id}
-                            render={
-                                <Input
-                                    id="transaction_id"
-                                    value={data.transaction_id}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData(
-                                            "transaction_id",
-                                            e.target.value
-                                        );
-                                        clearErrors("transaction_id");
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-
-                    <div className="align-top min-h-20">
-                        <FormField
-                            label="MSISDN"
-                            htmlFor="msisdn"
-                            error={errors.msisdn}
-                            render={
-                                <Input
-                                    id="msisdn"
-                                    value={data.msisdn}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData("msisdn", e.target.value);
-                                        clearErrors("msisdn");
+                                        clearErrors("ext_transaction_id");
                                     }}
                                 />
                             }

@@ -49,9 +49,7 @@ export default function Ticket({ auth }) {
         report_type: "",
         report_date: "",
         gpo_id: "",
-        partner_ref_number: "",
-        transaction_id: "",
-        msisdn: "",
+        ext_transaction_id: "",
 
         attachments: [],
     });

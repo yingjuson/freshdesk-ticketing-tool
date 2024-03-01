@@ -39,9 +39,7 @@ class Ticket extends Model
         'report_type',
         'report_date',
         'gpo_id',
-        'partner_ref_number',
-        'transaction_id',
-        'msisdn',
+        'ext_transaction_id',
     ];
 
     public function creator() {
