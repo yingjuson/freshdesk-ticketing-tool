@@ -9,7 +9,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 import { format } from "date-fns";
 
 import { Link } from "@inertiajs/react";

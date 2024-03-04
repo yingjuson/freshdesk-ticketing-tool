@@ -1,5 +1,5 @@
-import FormField from "@/Components/custom/form-field";
-import CustomRadioGroup from "@/Components/custom/custom-radio-group";
+import FormField from "@/components/custom/form-field";
+import CustomRadioGroup from "@/components/custom/custom-radio-group";
 import {
     CSX_PORTAL_ROLES,
     DISTRO_PORTAL_ROLES,

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import ApplicationLogo from "@/Components/ApplicationLogo";
-import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import ApplicationLogo from "@/tmp/ApplicationLogo";
+import Dropdown from "@/tmp/Dropdown";
+import NavLink from "@/tmp/NavLink";
+import ResponsiveNavLink from "@/tmp/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
 import { Toaster } from "@/components/ui/toaster";
 

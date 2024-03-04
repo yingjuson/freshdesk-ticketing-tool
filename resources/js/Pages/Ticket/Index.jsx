@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DataTable } from "@/Components/custom/data-table";
-import { columns } from "@/Components/tickets-table-columns";
+import { DataTable } from "@/components/custom/data-table";
+import { columns } from "@/components/custom/tickets-table-columns";
 
 import { CreateTicketDialog } from "./CreateTicketDialog";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";

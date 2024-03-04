@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Input } from "@/Components/ui/input";
-import { Button } from "@/Components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ScrollArea } from "@/Components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Dialog,
@@ -13,8 +13,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 
-import FormField from "@/Components/custom/form-field";
-import { FileDropzone } from "@/Components/custom/file-dropzone";
+import FormField from "@/components/custom/form-field";
+import { FileDropzone } from "@/components/custom/file-dropzone";
 
 import { getConcernTypeBadge } from "@/utils/component-utils";
 import WebtoolConcernForm from "./Forms/webtool-concern-form";

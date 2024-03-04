@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Textarea } from "@/Components/ui/textarea";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Textarea } from "@/components/ui/textarea";
+import AuthenticatedLayout from "@/layouts/authenticated-layout";
 import { getConcernTypeBadge } from "@/utils/component-utils";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import UpdateableFormField from "@/Components/custom/updateable-form-field";
+import UpdateableFormField from "@/components/custom/updateable-form-field";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Circle, MoreHorizontal } from "lucide-react";
-import { FileDropzone } from "@/Components/custom/file-dropzone";
-import { Input } from "@/Components/ui/input";
+import { FileDropzone } from "@/components/custom/file-dropzone";
+import { Input } from "@/components/ui/input";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { ChevronDown } from "lucide-react";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 
 import { ChevronLeft } from "lucide-react";
 import GpoAppServiceForm from "./Forms/gpo-app-service-form";

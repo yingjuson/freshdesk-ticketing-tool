@@ -10,8 +10,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import FormField from "@/Components/custom/form-field";
-import { Combobox } from "@/Components/custom/combobox";
+import FormField from "@/components/custom/form-field";
+import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 
 export default function NonGpoServiceConcernForm({

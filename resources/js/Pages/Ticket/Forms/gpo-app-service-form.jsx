@@ -8,10 +8,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import FormField from "@/Components/custom/form-field";
-import { Combobox } from "@/Components/custom/combobox";
+import FormField from "@/components/custom/form-field";
+import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
-import { TooltipIcon } from "@/Components/custom/tooltip-icon";
+import { TooltipIcon } from "@/components/custom/tooltip-icon";
 import { Info } from "lucide-react";
 
 const deviceOSTooltip = (

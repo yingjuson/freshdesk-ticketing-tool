@@ -3,11 +3,11 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Download } from "lucide-react";
-import { Label } from "../ui/label";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 export const FileExport = () => (
     <Popover>
@@ -32,8 +32,6 @@ export const FileExport = () => (
                     method="GET"
                     target="_blank"
                 >
-                    <input type="hidden" name="asd" value="z" />
-                    <input type="hidden" name="zxc" value="x" />
                     <div className="grid gap-3">
                         <div className="grid grid-cols-3 items-center gap-4">
                             <Label htmlFor="file_type">File type</Label>

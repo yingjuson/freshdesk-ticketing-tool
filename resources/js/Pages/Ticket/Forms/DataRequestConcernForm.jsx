@@ -10,8 +10,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
-import FormField from "@/Components/custom/form-field";
-import { Combobox } from "@/Components/custom/combobox";
+import FormField from "@/components/custom/form-field";
+import { Combobox } from "@/components/custom/combobox";
 import {
     CSX_PORTAL_ROLES,
     DISTRO_PORTAL_ROLES,
@@ -19,7 +19,7 @@ import {
     PORTAL_TYPES,
 } from "@/constants/webtool-constants";
 import { useEffect } from "react";
-import { FileDropzone } from "@/Components/custom/file-dropzone";
+import { FileDropzone } from "@/components/custom/file-dropzone";
 
 export default function DataRequestConcernForm({
     data,
