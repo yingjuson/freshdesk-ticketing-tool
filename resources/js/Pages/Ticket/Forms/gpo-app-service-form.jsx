@@ -10,7 +10,7 @@ import {
 import { format } from "date-fns";
 import FormField from "@/Components/custom/form-field";
 import { Combobox } from "@/Components/custom/combobox";
-import { GPO_APP_SERVICES } from "@/Constants/gpo-app-constants";
+import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import { TooltipIcon } from "@/Components/custom/tooltip-icon";
 import { Info } from "lucide-react";
 

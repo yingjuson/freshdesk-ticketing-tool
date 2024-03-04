@@ -5,7 +5,7 @@ import { Upload, Info, XCircle } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 import { cn } from "@/lib/utils";
-import { formatByteUnits } from "@/Utils/fileUtils";
+import { formatByteUnits } from "@/utils/file-utils";
 import PdfSvg from "../../../assets/pdf-svg.png";
 import { TooltipIcon } from "./tooltip-icon";
 

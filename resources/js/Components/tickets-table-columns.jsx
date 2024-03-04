@@ -13,7 +13,7 @@ import { Badge } from "./ui/badge";
 import { format } from "date-fns";
 
 import { Link } from "@inertiajs/react";
-import { getConcernTypeBadge, getStatusBadge } from "@/Utils/component-utils";
+import { getConcernTypeBadge, getStatusBadge } from "@/utils/component-utils";
 
 export const columns = [
     {

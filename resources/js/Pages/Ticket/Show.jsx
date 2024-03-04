@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Textarea } from "@/Components/ui/textarea";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { getConcernTypeBadge } from "@/Utils/component-utils";
+import { getConcernTypeBadge } from "@/utils/component-utils";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import UpdateableFormField from "@/Components/custom/updateable-form-field";
 import { format } from "date-fns";
@@ -27,8 +27,8 @@ import { Button } from "@/Components/ui/button";
 
 import { ChevronLeft } from "lucide-react";
 import GpoAppServiceForm from "./Forms/gpo-app-service-form";
-import { STATUS_COLORS } from "@/Constants/status-constants";
-import { GROUPED_CONCERN_TYPES } from "@/Constants/concern-type-constants";
+import { STATUS_COLORS } from "@/constants/status-constants";
+import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 import NonGpoAppServiceForm from "./Forms/non-gpo-app-service-form";
 import WebtoolConcernForm from "./Forms/webtool-concern-form";
 import ReportsConcernForm from "./Forms/reports-concern-form";

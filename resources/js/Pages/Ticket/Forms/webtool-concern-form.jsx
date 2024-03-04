@@ -5,7 +5,7 @@ import {
     DISTRO_PORTAL_ROLES,
     FINANCE_PORTAL_ROLES,
     PORTAL_TYPES,
-} from "@/Constants/webtool-constants";
+} from "@/constants/webtool-constants";
 
 export default function WebtoolConcernForm({
     data,

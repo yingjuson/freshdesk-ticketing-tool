@@ -1,4 +1,4 @@
-import { KEY_FLATTENED_CONCERN_TYPES } from "@/Constants/concern-type-constants";
+import { KEY_FLATTENED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 import { Badge } from "@/components/ui/badge";
 
 /**

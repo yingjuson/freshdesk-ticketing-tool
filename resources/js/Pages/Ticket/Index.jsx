@@ -17,7 +17,7 @@ import { DataTable } from "@/Components/custom/data-table";
 import { columns } from "@/Components/tickets-table-columns";
 
 import { CreateTicketDialog } from "./CreateTicketDialog";
-import { GROUPED_CONCERN_TYPES } from "@/Constants/concern-type-constants";
+import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 
 export default function Ticket({ auth }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
