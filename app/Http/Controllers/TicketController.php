@@ -22,8 +22,6 @@ class TicketController extends Controller
      */
     public function index(Request $request)
     {
-        // $tickets = Ticket::orderBy("created_at", 'desc')->get();
-
         $tickets = Ticket::query()
             ->when($request->input('search'), function ($query, $search) {
                 $query->where('subject', 'like', '%' . $search . '%')
@@ -35,7 +33,7 @@ class TicketController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('Ticket/Index', [
+        return Inertia::render('ticket/index', [
           'tickets' => $tickets
         ]);
     }
@@ -191,7 +189,7 @@ class TicketController extends Controller
     {
         $ticket->load('attachments');
 
-        return Inertia::render('Ticket/Show', [
+        return Inertia::render('ticket/show', [
           'ticket' => $ticket
         ]);
     }
@@ -212,9 +210,6 @@ class TicketController extends Controller
         try {
             $ticket->update($request->validated());
 
-            // return Inertia::render('Ticket/Show', [
-            //     'ticket' => $ticket
-            // ]);
             return Redirect::route('tickets.show', [
                 'ticket' => $ticket
             ]);

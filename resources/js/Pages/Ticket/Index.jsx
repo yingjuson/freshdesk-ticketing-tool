@@ -16,10 +16,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DataTable } from "@/components/custom/data-table";
 import { columns } from "@/components/custom/tickets-table-columns";
 
-import { CreateTicketDialog } from "./CreateTicketDialog";
+import { CreateTicketDialog } from "./create-ticket-dialog";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 
-export default function Ticket({ auth }) {
+export default function TicketIndex({ auth }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedConcern, setSlectedConcern] = useState(null);
 

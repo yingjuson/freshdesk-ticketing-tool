@@ -17,12 +17,12 @@ import FormField from "@/components/custom/form-field";
 import { FileDropzone } from "@/components/custom/file-dropzone";
 
 import { getConcernTypeBadge } from "@/utils/component-utils";
-import WebtoolConcernForm from "./Forms/webtool-concern-form";
-import ReportsConcernForm from "./Forms/reports-concern-form";
-import DataRequestConcernForm from "./Forms/DataRequestConcernForm";
+import WebtoolConcernForm from "./forms/webtool-concern-form";
+import ReportsConcernForm from "./forms/reports-concern-form";
+import DataRequestConcernForm from "./forms/data-request-concern-form";
 
-import GpoAppServiceForm from "./Forms/gpo-app-service-form";
-import NonGpoAppServiceForm from "./Forms/non-gpo-app-service-form";
+import GpoAppServiceForm from "./forms/gpo-app-service-form";
+import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 
 export const CreateTicketDialog = ({

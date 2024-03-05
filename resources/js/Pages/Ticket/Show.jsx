@@ -26,13 +26,13 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { ChevronLeft } from "lucide-react";
-import GpoAppServiceForm from "./Forms/gpo-app-service-form";
+import GpoAppServiceForm from "./forms/gpo-app-service-form";
 import { STATUS_COLORS } from "@/constants/status-constants";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
-import NonGpoAppServiceForm from "./Forms/non-gpo-app-service-form";
-import WebtoolConcernForm from "./Forms/webtool-concern-form";
-import ReportsConcernForm from "./Forms/reports-concern-form";
-import DataRequestConcernForm from "./Forms/DataRequestConcernForm";
+import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
+import WebtoolConcernForm from "./forms/webtool-concern-form";
+import ReportsConcernForm from "./forms/reports-concern-form";
+import DataRequestConcernForm from "./forms/data-request-concern-form";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function ShowEdit({ auth }) {
