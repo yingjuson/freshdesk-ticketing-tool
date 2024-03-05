@@ -1,3 +1,4 @@
+import path from "path";
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import react from "@vitejs/plugin-react";
@@ -10,16 +11,9 @@ export default defineConfig({
         }),
         react(),
     ],
-    build: {
-        sourcemap: true,
-        rollupOptions: {
-            onwarn(warning, defaultHandler) {
-                if (warning.code === "SOURCEMAP_ERROR") {
-                    return;
-                }
-
-                defaultHandler(warning);
-            },
+    resolve: {
+        alias: {
+            "@/utils": path.resolve(__dirname, "./resources/js/utils"),
         },
     },
 });
