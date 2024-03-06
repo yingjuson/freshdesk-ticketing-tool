@@ -57,6 +57,29 @@ export default function GpoAppServiceForm({
         }
     }, [data.service_type]);
 
+    const getTransactionAmount = () => {
+        const lastChar = data.transaction_amount.slice(
+            data.transaction_amount.length - 1
+        );
+
+        if (lastChar === ".") {
+            return Number(data.transaction_amount).toLocaleString().lastChar;
+        }
+
+        return Number(data.transaction_amount).toLocaleString();
+    };
+
+    const handleTransactionAmount = (inputAmount) => {
+        const [baseVal, decimalVal] = inputAmount.split(".");
+
+        if (decimalVal && decimalVal.length > 2) return;
+
+        let amount = inputAmount.replaceAll(",", "");
+
+        setData("transaction_amount", amount);
+        clearErrors("transaction_amount");
+    };
+
     return (
         <>
             <div className="align-top min-h-20 col-span-1">
@@ -201,14 +224,11 @@ export default function GpoAppServiceForm({
                     render={
                         <Input
                             id="transaction_amount"
-                            type="number"
-                            min="0.00"
                             editabledisplaymode={editMode}
-                            value={data.transaction_amount}
-                            onChange={(e) => {
-                                setData("transaction_amount", e.target.value);
-                                clearErrors("transaction_amount");
-                            }}
+                            value={getTransactionAmount()}
+                            onChange={(e) =>
+                                handleTransactionAmount(e.target.value)
+                            }
                         />
                     }
                 />
