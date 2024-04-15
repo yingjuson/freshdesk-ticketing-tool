@@ -34,6 +34,7 @@ class StoreTicketRequest extends FormRequest
             'transaction_datetime.required' => 'Transaction date and time is required',
 
             'gpo_id.required_if' => 'GPO ID is required',
+            'attachments.required_if' => ':Attribute required',
             'biller_ref_number.required_if' => 'Biller reference number is required',
             'gpadala_ref_number.required_if' => 'GPadala reference number is required',
             'transaction_datetime.required_if' => 'Transaction date and time is required',
@@ -85,6 +86,8 @@ class StoreTicketRequest extends FormRequest
             'distributor_portal'
         ];
 
+        $accepted_file_types = ['png', 'gif', 'apng', 'avif', 'webp', 'jpg', 'jpeg', 'svg', 'mp4', 'ogv', 'mpeg', 'webm', '3gp', '3g2', 'avi', 'pdf'];
+
         return [
             'concern_type'              => ['string', 'required'],
             'service_type'              => ['string', 'required_if:concern_type,gpo_app_service', 'nullable'],
@@ -110,7 +113,9 @@ class StoreTicketRequest extends FormRequest
 
             'ext_transaction_id'        => ['required_if:concern_type,gpo_service_variance', 'string', 'nullable'],
 
-            'attachments.*'             => [File::types(['png', 'jpg', 'jpeg', 'pdf', 'mp4']), 'nullable']
+            // 'attachments.*'             => ['required_if:concern_type,distro_mapping_update', File::types($accepted_file_types), 'nullable']
+            'attachments'               => ['required_if:concern_type,distro_mapping_update', 'nullable'],
+            'attachments.*'             => ['required', File::types($accepted_file_types), 'nullable']
         ];
     }
 }

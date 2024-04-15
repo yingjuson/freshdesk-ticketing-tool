@@ -49,6 +49,7 @@ import { router, useForm } from "@inertiajs/react";
 
 import FormField from "./form-field";
 import { FileExport } from "./file-export";
+import InputWithIcon from "./input-with-icon";
 
 export function DataTable({ columns, data, links: paginationLinks }) {
     const [search, setSearch] = useState("");
@@ -76,8 +77,8 @@ export function DataTable({ columns, data, links: paginationLinks }) {
     return (
         <div>
             <div className="flex items-center py-4">
-                <Input
-                    placeholder="Enter search keywords"
+                <InputWithIcon
+                    placeholder="Search for ticket subject, ID, or concern type"
                     onChange={(event) =>
                         router.get(
                             route("tickets.index"),
@@ -85,7 +86,6 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                             { preserveState: true, replace: true }
                         )
                     }
-                    className="w-56"
                 />
 
                 <DropdownMenu>
@@ -126,7 +126,10 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead
+                                            key={header.id}
+                                            // className="text-center"
+                                        >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(

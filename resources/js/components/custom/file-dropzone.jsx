@@ -9,6 +9,27 @@ import { formatByteUnits } from "@/utils/file-utils";
 import PdfSvg from "../../../assets/pdf-svg.png";
 import { TooltipIcon } from "./tooltip-icon";
 
+const SUPPORTED_FILE_TYPES = {
+    "image/png": [".png"],
+    "image/gif": [".gif"],
+    "image/apng": [".apng"],
+    "image/avif": [".avif"],
+    "image/webp": [".webp"],
+    "image/jpeg": [".jpg", ".jpeg"],
+    "image/svg+xml": [".svg"],
+    "video/mp4": [".mp4"],
+    "video/ogg": [".ogv"],
+    "video/mpeg": [".mpeg"],
+    "video/webm": [".webm"],
+    "video/3gpp": [".3gp"],
+    "video/3gpp2": [".3g2"],
+    "video/x-msvideo": [".avi"],
+    "application/pdf": [".pdf"],
+};
+
+const getAcceptedFileTypes = () =>
+    Object.values(SUPPORTED_FILE_TYPES).flat().join(" ");
+
 const getThumbnail = (file) => {
     switch (file.type) {
         case "application/pdf":
@@ -80,12 +101,7 @@ export const FileDropzone = ({ className, files, setFiles }) => {
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: {
-            "image/png": [".png"],
-            "image/jpeg": [".jpg", ".jpeg"],
-            "video/mp4": [".mp4"],
-            "application/pdf": [".pdf"],
-        },
+        accept: SUPPORTED_FILE_TYPES,
     });
 
     return (
@@ -107,14 +123,17 @@ export const FileDropzone = ({ className, files, setFiles }) => {
                     </p>
                 </>
             </div>
-            <div className="flex items-center gap-1 mt-1">
-                <p className="text-xs text-gray-400 font-thin">
-                    Accepted file types
-                </p>
-                <TooltipIcon
-                    icon={<Info size="16" color="blue" strokeWidth={2.5} />}
-                    content=".jpg .jpeg .png .pdf .mp4" // TO DO: add more
-                />
+
+            <div className="flex justify-between mt-1 w-3/4">
+                <div className="flex gap-1 text-sm text-gray-400">
+                    <p>Accepted file types</p>
+                    <TooltipIcon
+                        icon={<Info size="18" color="blue" strokeWidth={1.5} />}
+                        content={getAcceptedFileTypes()}
+                    />
+                </div>
+
+                <p className="text-sm text-gray-400">Total file size: 20MB</p>
             </div>
 
             <div id="thumbs" className="my-4 mx-2 flex flex-wrap gap-2 h-full">

@@ -57,7 +57,7 @@ export const CONCERN_TYPES = [
     {
         group: "Webtool",
         key: "webtool",
-        value: "webtool",
+        value: "Webtool",
     },
     {
         group: "Reports",
@@ -74,32 +74,32 @@ export const CONCERN_TYPES = [
         key: "additional_recipient",
         value: "Additional Recipient",
     },
-    // {
-    //     group: "Others",
-    //     key: "gpo_bulk_distro_transfer",
-    //     value: "GPO Bulk Distro Transfer",
-    // },
-    // {
-    //     group: "Others",
-    //     key: "distro_mapping_update",
-    //     value: "Distro Mapping Update",
-    // },
-    // {
-    //     group: "Others",
-    //     key: "distro_deactivation_request",
-    //     value: "Distro Deactivation Request",
-    // },
-    // {
-    //     group: "Others",
-    //     key: "gpo_mobtel_remap",
-    //     value: "GPO Mobtel Remap",
-    // },
+    {
+        group: "Others",
+        key: "gpo_bulk_distro_transfer",
+        value: "GPO Bulk Distro Transfer",
+    },
+    {
+        group: "Others",
+        key: "distro_mapping_update",
+        value: "Distro Mapping Update",
+    },
+    {
+        group: "Others",
+        key: "distro_deactivation_request",
+        value: "Distro Deactivation Request",
+    },
+    {
+        group: "Others",
+        key: "gpo_mobtel_remap",
+        value: "GPO Mobtel Remap",
+    },
     // exception
-    // {
-    //     group: "Others",
-    //     key: "data_request",
-    //     value: "Data Request",
-    // },
+    {
+        group: "Others",
+        key: "data_request",
+        value: "Data Request",
+    },
 ];
 
 export const KEY_FLATTENED_CONCERN_TYPES = CONCERN_TYPES.reduce(

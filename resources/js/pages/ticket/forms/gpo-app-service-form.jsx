@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -13,6 +13,7 @@ import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import { TooltipIcon } from "@/components/custom/tooltip-icon";
 import { Info } from "lucide-react";
+import PhoneInput from "@/components/custom/phone-input";
 
 const deviceOSTooltip = (
     <div className="text-sm">
@@ -58,6 +59,10 @@ export default function GpoAppServiceForm({
     }, [data.service_type]);
 
     const getTransactionAmount = () => {
+        // if (data.transaction_amount === '') {
+        //     return 0;
+        // }
+
         const lastChar = data.transaction_amount.slice(
             data.transaction_amount.length - 1
         );
@@ -70,11 +75,13 @@ export default function GpoAppServiceForm({
     };
 
     const handleTransactionAmount = (inputAmount) => {
+        let amount = inputAmount.replaceAll(",", "");
+
+        if (isNaN(amount)) return;
+
         const [baseVal, decimalVal] = inputAmount.split(".");
 
         if (decimalVal && decimalVal.length > 2) return;
-
-        let amount = inputAmount.replaceAll(",", "");
 
         setData("transaction_amount", amount);
         clearErrors("transaction_amount");
@@ -110,12 +117,13 @@ export default function GpoAppServiceForm({
                     htmlFor="gpo_mobile_number"
                     error={errors.gpo_mobile_number}
                     render={
-                        <Input
+                        <PhoneInput
                             id="gpo_mobile_number"
-                            value={data.gpo_mobile_number}
                             editabledisplaymode={editMode}
-                            onChange={(e) => {
-                                setData("gpo_mobile_number", e.target.value);
+                            placeholder="ex: 0999 123 4567"
+                            value={data.gpo_mobile_number}
+                            onChange={(inputValue) => {
+                                setData("gpo_mobile_number", inputValue);
                                 clearErrors("gpo_mobile_number");
                             }}
                         />
@@ -187,9 +195,10 @@ export default function GpoAppServiceForm({
                             id="device_model"
                             value={data.device_model}
                             editabledisplaymode={editMode}
-                            onChange={(e) =>
-                                setData("device_model", e.target.value)
-                            }
+                            onChange={(e) => {
+                                setData("device_model", e.target.value);
+                                clearErrors("device_model");
+                            }}
                         />
                     }
                 />
@@ -207,9 +216,10 @@ export default function GpoAppServiceForm({
                             id="device_os_version"
                             value={data.device_os_version}
                             editabledisplaymode={editMode}
-                            onChange={(e) =>
-                                setData("device_os_version", e.target.value)
-                            }
+                            onChange={(e) => {
+                                setData("device_os_version", e.target.value);
+                                clearErrors("device_os_version");
+                            }}
                         />
                     }
                 />

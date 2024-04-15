@@ -32,10 +32,19 @@ import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
 import WebtoolConcernForm from "./forms/webtool-concern-form";
 import ReportsConcernForm from "./forms/reports-concern-form";
-import DataRequestConcernForm from "./forms/data-request-concern-form";
+import OtherRequestForm from "./forms/other-request-form";
 import { useToast } from "@/components/ui/use-toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogDescription,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function ShowEdit({ auth }) {
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const { toast } = useToast();
     const ticket = usePage().props.ticket;
 
@@ -57,8 +66,15 @@ export default function ShowEdit({ auth }) {
             : "",
     });
 
-    const { data, setData, errors, put, clearErrors, transform } =
-        ticketUpdateForm;
+    const {
+        data,
+        setData,
+        errors,
+        put,
+        delete: destroy,
+        clearErrors,
+        transform,
+    } = ticketUpdateForm;
 
     const [files, setFiles] = useState(ticket.attachments || []);
 
@@ -94,9 +110,7 @@ export default function ShowEdit({ auth }) {
             case "Reports":
                 return <ReportsConcernForm editMode {...ticketUpdateForm} />;
             case "Others":
-                return (
-                    <DataRequestConcernForm editMode {...ticketUpdateForm} />
-                );
+                return <OtherRequestForm editMode {...ticketUpdateForm} />;
             default:
                 return null;
         }
@@ -122,6 +136,17 @@ export default function ShowEdit({ auth }) {
                     variant: "destructive",
                 });
             },
+        });
+    };
+
+    const deleteTicket = (e) => {
+        e.preventDefault();
+
+        destroy(route("tickets.destroy", { id: ticket.id }), {
+            preserveScroll: true,
+            onSuccess: () => setIsDeleteModalOpen(false),
+            onError: () => console.error("failed to delete ticket"),
+            onFinish: () => console.log("redirect to index page"),
         });
     };
 
@@ -171,7 +196,12 @@ export default function ShowEdit({ auth }) {
                                             Actions
                                         </DropdownMenuLabel>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem className="justify-center">
+                                        <DropdownMenuItem
+                                            className="justify-center"
+                                            onClick={() =>
+                                                setIsDeleteModalOpen(true)
+                                            }
+                                        >
                                             Delete
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -332,6 +362,42 @@ export default function ShowEdit({ auth }) {
                                 </TabsContent>
                             </Tabs>
                         </form>
+                        <Dialog
+                            open={isDeleteModalOpen}
+                            onOpenChange={setIsDeleteModalOpen}
+                        >
+                            <DialogContent>
+                                {/* <form onSubmit={deleteTicket}> */}
+                                <DialogHeader>
+                                    <DialogTitle>
+                                        Are you sure you want to delete this
+                                        ticket?
+                                    </DialogTitle>
+                                    <DialogDescription>
+                                        This action is irreversible. This will
+                                        delete the ticket here in the tool and
+                                        its corresponding ticket in Freshdesk.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() =>
+                                            setIsDeleteModalOpen(false)
+                                        }
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={deleteTicket}
+                                    >
+                                        Proceed
+                                    </Button>
+                                </DialogFooter>
+                                {/* </form> */}
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </div>

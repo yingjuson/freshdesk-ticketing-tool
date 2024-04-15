@@ -5,10 +5,14 @@ import PrimaryButton from "@/components/primary-button";
 import TextInput from "@/components/text-input";
 import { useForm } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
+import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 export default function UpdatePasswordForm({ className = "" }) {
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
+
+    const { toast } = useToast();
 
     const {
         data,
@@ -29,7 +33,14 @@ export default function UpdatePasswordForm({ className = "" }) {
 
         put(route("password.update"), {
             preserveScroll: true,
-            onSuccess: () => reset(),
+            onSuccess: () => {
+                reset();
+                toast({
+                    title: "Success",
+                    description: "Password has been updated.",
+                    variant: "success",
+                });
+            },
             onError: (errors) => {
                 if (errors.password) {
                     reset("password", "password_confirmation");
@@ -124,7 +135,7 @@ export default function UpdatePasswordForm({ className = "" }) {
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
 
-                    <Transition
+                    {/* <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
                         enterFrom="opacity-0"
@@ -132,7 +143,7 @@ export default function UpdatePasswordForm({ className = "" }) {
                         leaveTo="opacity-0"
                     >
                         <p className="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                    </Transition> */}
                 </div>
             </form>
         </section>

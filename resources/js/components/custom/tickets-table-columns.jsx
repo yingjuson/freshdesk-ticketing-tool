@@ -1,17 +1,6 @@
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
-
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "../ui/badge";
 import { format } from "date-fns";
-
 import { Link } from "@inertiajs/react";
 import { getConcernTypeBadge, getStatusBadge } from "@/utils/component-utils";
 
@@ -36,13 +25,15 @@ export const columns = [
         cell: ({ row }) => {
             const fdTicketNumber = row.getValue("freshdesk_ticket_number");
             return (
-                <a
-                    className="text-blue-500"
-                    href={`https://j6w.freshdesk.com/a/tickets/${fdTicketNumber}`}
-                    target="_blank"
-                >
-                    {fdTicketNumber}
-                </a>
+                <div className="text-center">
+                    <a
+                        className="text-blue-500"
+                        href={`https://j6w.freshdesk.com/a/tickets/${fdTicketNumber}`}
+                        target="_blank"
+                    >
+                        {fdTicketNumber}
+                    </a>
+                </div>
             );
         },
     },

@@ -50,5 +50,8 @@ export const getStatusBadge = (status) => {
             break;
     }
 
-    return <Badge variant={variant}>{status.replace("_", " ")}</Badge>;
+    let badgeLabel = status.replace("_", " ");
+    badgeLabel = badgeLabel.charAt(0).toUpperCase() + badgeLabel.slice(1);
+
+    return <Badge variant={variant}>{badgeLabel}</Badge>;
 };

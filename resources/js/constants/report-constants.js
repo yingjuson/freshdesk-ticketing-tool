@@ -12,10 +12,6 @@ export const REPORT_TYPE = [
         label: "GPO Processed Application Report",
     },
     {
-        value: "gpo_ledger_report",
-        label: "GPO Ledger Report",
-    },
-    {
         value: "gpo_daily_wallet_balance",
         label: "GPO Daily Wallet Balance",
     },
@@ -42,3 +38,18 @@ export const REPORT_TYPE = [
         label: "Distributor Total Monthly Transactions Report",
     },
 ];
+
+export const REPORT_TYPE_SORTED_ASC = REPORT_TYPE.sort((a, b) => {
+    let labelA = a.label.toLowerCase(),
+        labelB = b.label.toLowerCase();
+
+    if (labelA < labelB) {
+        return -1;
+    }
+
+    if (labelA > labelB) {
+        return 1;
+    }
+
+    return 0;
+});

@@ -1,7 +1,7 @@
 export const GPO_APP_SERVICES = [
     {
         value: "dagdag_pondo",
-        label: "Dagdago Pondo (Self Wallet In)",
+        label: "Dagdag Pondo (Self Wallet In)",
     },
     {
         value: "scan_to_pay",

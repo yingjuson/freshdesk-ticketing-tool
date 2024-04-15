@@ -21,7 +21,7 @@ import {
 import { useEffect } from "react";
 import { FileDropzone } from "@/components/custom/file-dropzone";
 
-export default function DataRequestConcernForm({
+export default function OtherRequestForm({
     data,
     setData,
     errors,
@@ -29,8 +29,8 @@ export default function DataRequestConcernForm({
     clearErrors,
 }) {
     return (
-        <div className="w-full h-full grid grid-cols-2 gap-5">
-            <div className="align-top">
+        <>
+            {/* <div className="align-top min-h-20">
                 <FormField
                     required
                     label="Start date"
@@ -56,7 +56,7 @@ export default function DataRequestConcernForm({
                 />
             </div>
 
-            <div className="align-top">
+            <div className="align-top min-h-20">
                 <FormField
                     required
                     label="End date"
@@ -80,32 +80,27 @@ export default function DataRequestConcernForm({
                         />
                     }
                 />
-            </div>
+            </div> */}
 
-            <div className="align-top col-span-2">
+            <div className="align-top col-span-3 flex">
                 <FormField
                     required
-                    label="Issue details"
+                    label="Request details"
                     htmlFor="issue_details"
                     error={errors.issue_details}
                     render={
-                        <>
-                            <Textarea
-                                id="issue_details"
-                                value={data.issue_details}
-                                placeholder="Enter issue details here."
-                                onChange={(e) => {
-                                    setData("issue_details", e.target.value);
-                                    clearErrors("issue_details");
-                                }}
-                            />
-                            <p className="text-sm text-muted-foreground">
-                                If error message is displayed, please specify
-                            </p>
-                        </>
+                        <Textarea
+                            id="issue_details"
+                            value={data.issue_details}
+                            placeholder="Example: Kindly update the Distributor mapping as of MM/DD/YYYY"
+                            onChange={(e) => {
+                                setData("issue_details", e.target.value);
+                                clearErrors("issue_details");
+                            }}
+                        />
                     }
                 />
             </div>
-        </div>
+        </>
     );
 }

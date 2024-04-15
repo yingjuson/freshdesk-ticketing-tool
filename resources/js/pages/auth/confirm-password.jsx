@@ -5,6 +5,7 @@ import InputLabel from "@/components/input-label";
 import PrimaryButton from "@/components/primary-button";
 import TextInput from "@/components/text-input";
 import { Head, useForm } from "@inertiajs/react";
+import { Input } from "@/components/ui/input";
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({

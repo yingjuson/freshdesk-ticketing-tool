@@ -4,6 +4,7 @@ import PrimaryButton from "@/components/primary-button";
 import TextInput from "@/components/text-input";
 import { Link, useForm, usePage } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -11,6 +12,8 @@ export default function UpdateProfileInformation({
     className = "",
 }) {
     const user = usePage().props.auth.user;
+
+    const { toast } = useToast();
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
@@ -22,7 +25,15 @@ export default function UpdateProfileInformation({
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route("profile.update"));
+        patch(route("profile.update"), {
+            onSuccess: () => {
+                toast({
+                    title: "Success",
+                    description: "Profile information has been updated.",
+                    variant: "success",
+                });
+            },
+        });
     };
 
     return (
@@ -111,7 +122,7 @@ export default function UpdateProfileInformation({
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
 
-                    <Transition
+                    {/* <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
                         enterFrom="opacity-0"
@@ -119,7 +130,7 @@ export default function UpdateProfileInformation({
                         leaveTo="opacity-0"
                     >
                         <p className="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                    </Transition> */}
                 </div>
             </form>
         </section>

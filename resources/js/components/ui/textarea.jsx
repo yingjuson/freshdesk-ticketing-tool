@@ -2,6 +2,8 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+const MAX_INPUT_LENGTH = 10000;
+
 const Textarea = React.forwardRef(
     ({ className, helperText, helperText2, ...props }, ref) => {
         return (
@@ -15,18 +17,27 @@ const Textarea = React.forwardRef(
                         className
                     )}
                     ref={ref}
+                    maxLength={MAX_INPUT_LENGTH}
                     {...props}
                 />
-                {helperText && (
-                    <p className="text-sm text-muted-foreground">
-                        {helperText}
+                <div id="textarea-helpers" className="flex justify-between">
+                    <div className="flex flex-col gap-1">
+                        {helperText && (
+                            <p className="text-sm text-muted-foreground">
+                                {helperText}
+                            </p>
+                        )}
+                        {helperText2 && (
+                            <p className="text-sm text-muted-foreground">
+                                {helperText2}
+                            </p>
+                        )}
+                    </div>
+
+                    <p className="text-sm text-muted-foreground text-right min-w-24">
+                        {`${props.value.length} / ${MAX_INPUT_LENGTH}`}
                     </p>
-                )}
-                {helperText2 && (
-                    <p className="text-sm text-muted-foreground">
-                        {helperText2}
-                    </p>
-                )}
+                </div>
             </>
         );
     }

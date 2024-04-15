@@ -51,6 +51,7 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
+
         $payload = $request->validated();
         $user = Auth::user();
 
@@ -66,7 +67,6 @@ class TicketController extends Controller
         DB::beginTransaction();
 
         try {
-
             $attachments = [];
             $freshdeskAttachments = [];
 
@@ -94,13 +94,12 @@ class TicketController extends Controller
                 }
             }
 
-            // $custom_fields = [
-            //     'portal type' => $request->input('portal_type'),
-            //     'role' => $request->input('webtool_role')
-            // ];
+            $custom_fields = [
+                'portal type' => $request->input('portal_type'),
+                'role' => $request->input('webtool_role')
+            ];
 
             $description = '';
-
 
             foreach ($payload as $key => $value) {
                 if ($key != 'attachments' && !!$value) {
@@ -121,7 +120,7 @@ class TicketController extends Controller
                 'subject' => $request->input('subject'),
                 'description' => $description,
                 'attachments' => $freshdeskAttachments,
-                'email' => "james@j6winc.com",
+                'email' => $user->email,
                 "priority" => 1,
                 "status" => 2,
             ];
@@ -149,9 +148,8 @@ class TicketController extends Controller
             
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
             return redirect()->back()->withErrors([
-                'create' => 'Failed to create new ticket'
+                'create' => $e->getMessage() ?? "An error occurred while performing this request."
             ]);
         }
     }
@@ -223,8 +221,9 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Ticket $ticket)
     {
-        //
+        // get FD ticket and delete it first
+        dd($ticket);
     }
 }

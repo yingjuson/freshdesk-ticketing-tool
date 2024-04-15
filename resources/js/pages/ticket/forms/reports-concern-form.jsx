@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import FormField from "@/components/custom/form-field";
 import { Combobox } from "@/components/custom/combobox";
-import { REPORT_TYPE } from "@/constants/report-constants";
+import { REPORT_TYPE_SORTED_ASC } from "@/constants/report-constants";
 import { useEffect, useState } from "react";
 import { FileDropzone } from "@/components/custom/file-dropzone";
 
@@ -29,7 +29,7 @@ export default function ReportsConcernForm({
 
     return (
         <>
-            <div className="align-top min-h-20 ">
+            <div className="align-top min-h-20">
                 <FormField
                     required
                     label="Report type"
@@ -44,7 +44,7 @@ export default function ReportsConcernForm({
                             placeholder="Select report type"
                             searchPlaceholder="Enter report type name"
                             editabledisplaymode={editMode}
-                            options={REPORT_TYPE}
+                            options={REPORT_TYPE_SORTED_ASC}
                             onChange={setData}
                         />
                     }

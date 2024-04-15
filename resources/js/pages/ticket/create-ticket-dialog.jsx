@@ -19,11 +19,14 @@ import { FileDropzone } from "@/components/custom/file-dropzone";
 import { getConcernTypeBadge } from "@/utils/component-utils";
 import WebtoolConcernForm from "./forms/webtool-concern-form";
 import ReportsConcernForm from "./forms/reports-concern-form";
-import DataRequestConcernForm from "./forms/data-request-concern-form";
+import OtherRequestForm from "./forms/other-request-form";
 
 import GpoAppServiceForm from "./forms/gpo-app-service-form";
 import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+import { ShieldAlert, RotateCcw, Info, XCircle } from "lucide-react";
 
 export const CreateTicketDialog = ({
     isOpen,
@@ -48,7 +51,7 @@ export const CreateTicketDialog = ({
 
     const detailsTabHasError = () => {
         if (errors.length === 0) return false;
-        const { issue_details: _, ...errorsCopy } = errors;
+        const { issue_details, subject, ...errorsCopy } = errors;
         return Object.keys(errorsCopy).length > 0;
     };
 
@@ -58,6 +61,15 @@ export const CreateTicketDialog = ({
         clearErrors();
     };
 
+    const handleResetFields = (e) => {
+        e.preventDefault();
+
+        reset();
+        clearErrors();
+
+        console.log("rset everthgin");
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -65,10 +77,19 @@ export const CreateTicketDialog = ({
             onSuccess: () => {
                 handleCancelClick();
                 toast({
-                    title: "Success!",
+                    title: "Success",
                     description: "Ticket has been created.",
                     variant: "success",
                 });
+            },
+            onError: (errors) => {
+                if (errors.create) {
+                    toast({
+                        title: "Error",
+                        description: errors.create,
+                        variant: "destructive",
+                    });
+                }
             },
         });
     };
@@ -81,18 +102,18 @@ export const CreateTicketDialog = ({
         return "If error message is displayed, please specify";
     };
 
+    // Determine the group of the selected concern
+    const selectedGroup = Object.keys(GROUPED_CONCERN_TYPES).find((group) =>
+        GROUPED_CONCERN_TYPES[group].some(
+            (item) => item.key === selectedConcern
+        )
+    );
+
     // TO DO: Add to utils
     const getForm = (selectedConcern) => {
         if (!selectedConcern) {
             return null;
         }
-
-        // Determine the group of the selected concern
-        const selectedGroup = Object.keys(GROUPED_CONCERN_TYPES).find((group) =>
-            GROUPED_CONCERN_TYPES[group].some(
-                (item) => item.key === selectedConcern
-            )
-        );
 
         switch (selectedGroup) {
             case "App":
@@ -105,11 +126,14 @@ export const CreateTicketDialog = ({
             case "Reports":
                 return <ReportsConcernForm {...props} />;
             case "Others":
-                return <DataRequestConcernForm {...props} />;
+                // distro_mapping_update;
+                return <OtherRequestForm {...props} />;
             default:
                 return null;
         }
     };
+
+    console.log({ errors, selectedConcern });
 
     return (
         <Dialog
@@ -139,7 +163,8 @@ export const CreateTicketDialog = ({
                                 <Input
                                     id="subject"
                                     value={data.subject}
-                                    className="font-semibold"
+                                    className="font-semibold placeholder:font-normal"
+                                    placeholder="Enter short subject or title"
                                     onChange={(e) => {
                                         setData("subject", e.target.value);
                                         clearErrors("subject");
@@ -160,22 +185,35 @@ export const CreateTicketDialog = ({
                             >
                                 Details
                             </TabsTrigger>
+
+                            {selectedGroup !== "Others" && (
+                                <TabsTrigger
+                                    value="more-details"
+                                    {...(errors.issue_details && {
+                                        className:
+                                            "text-rose-700 data-[state=active]:text-rose-700",
+                                    })}
+                                >
+                                    More Details
+                                </TabsTrigger>
+                            )}
+
                             <TabsTrigger
-                                value="more-details"
-                                {...(errors.issue_details && {
+                                value="attachments"
+                                {...(errors.attachments && {
                                     className:
                                         "text-rose-700 data-[state=active]:text-rose-700",
                                 })}
                             >
-                                More Details
-                            </TabsTrigger>
-                            <TabsTrigger value="attachments">
                                 Attachments
                             </TabsTrigger>
                         </TabsList>
 
-                        <ScrollArea className="h-full max-h-[45vh]">
-                            <TabsContent value="details" className="w-full p-3">
+                        <ScrollArea className="h-full max-h-[45vh] p-3">
+                            <TabsContent
+                                value="details"
+                                className="w-full px-1"
+                            >
                                 <div className="grid grid-cols-3 gap-5 h-full">
                                     {getForm(selectedConcern)}
                                 </div>
@@ -183,7 +221,7 @@ export const CreateTicketDialog = ({
 
                             <TabsContent
                                 value="more-details"
-                                className="flex justify-center p-3"
+                                className="flex justify-center px-1"
                             >
                                 <FormField
                                     required
@@ -191,36 +229,52 @@ export const CreateTicketDialog = ({
                                     htmlFor="issue_details"
                                     error={errors.issue_details}
                                     render={
-                                        <>
-                                            <Textarea
-                                                id="issue_details"
-                                                value={data.issue_details}
-                                                helperText={getHelperText()}
-                                                {...(data.concern_type ===
-                                                    "webtool" && {
-                                                    helperText2:
-                                                        "If for report generation, please specify the date range and status",
-                                                })}
-                                                placeholder="Enter more details regarding your request or concern."
-                                                onChange={(e) => {
-                                                    setData(
-                                                        "issue_details",
-                                                        e.target.value
-                                                    );
-                                                    clearErrors(
-                                                        "issue_details"
-                                                    );
-                                                }}
-                                            />
-                                        </>
+                                        <Textarea
+                                            id="issue_details"
+                                            value={data.issue_details}
+                                            helperText={getHelperText()}
+                                            {...(data.concern_type ===
+                                                "webtool" && {
+                                                helperText2:
+                                                    "If for report generation, please specify the date range and status",
+                                            })}
+                                            placeholder="Enter more details regarding your request or concern."
+                                            onChange={(e) => {
+                                                setData(
+                                                    "issue_details",
+                                                    e.target.value
+                                                );
+                                                clearErrors("issue_details");
+                                            }}
+                                        />
                                     }
                                 />
                             </TabsContent>
 
                             <TabsContent
                                 value="attachments"
-                                className="flex justify-center"
+                                className="flex flex-col justify-center items-center gap- px-1"
                             >
+                                {selectedConcern ===
+                                    "distro_mapping_update" && (
+                                    <Alert
+                                        variant={
+                                            errors.attachments
+                                                ? "destructive"
+                                                : "warning"
+                                        }
+                                        className="w-fit py-2"
+                                    >
+                                        <ShieldAlert size="18" />
+                                        <AlertTitle>
+                                            Attachment required
+                                        </AlertTitle>
+                                        <AlertDescription>
+                                            Please provide the updated file of
+                                            the distro mapping
+                                        </AlertDescription>
+                                    </Alert>
+                                )}
                                 <FileDropzone
                                     files={files}
                                     setFiles={setFiles}
@@ -244,6 +298,14 @@ export const CreateTicketDialog = ({
                                 must be filled out before submitting
                             </p>
                         </div>
+                        <Button
+                            variant="ghost"
+                            className="flex gap-1 text-primary hover:bg-color-none hover:text-primary"
+                            onClick={handleResetFields}
+                        >
+                            <RotateCcw size="16" />
+                            Reset all fields
+                        </Button>
                         <Button
                             type="button"
                             variant="secondary"
