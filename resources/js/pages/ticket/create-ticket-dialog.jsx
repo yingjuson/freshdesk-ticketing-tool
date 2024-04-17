@@ -275,9 +275,19 @@ export const CreateTicketDialog = ({
                                         </AlertDescription>
                                     </Alert>
                                 )}
-                                <FileDropzone
+                                {/* <FileDropzone
                                     files={files}
                                     setFiles={setFiles}
+                                /> */}
+
+                                <Input
+                                    id="file-upload"
+                                    type="file"
+                                    onChange={(e) => {
+                                        console.log(e.target.files);
+
+                                        setData("attachments", e.target.files);
+                                    }}
                                 />
                             </TabsContent>
                         </ScrollArea>

@@ -181,13 +181,20 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                 <Pagination>
                     <PaginationContent>
                         {paginationLinks.map((paginationLink, index) => {
+                            const httpsPaginationLink = paginationLink.url
+                                ? paginationLink.url.replace(
+                                      "http://",
+                                      "https://"
+                                  )
+                                : null;
+
                             if (index === 0) {
                                 return (
                                     <PaginationPrevious
                                         key={index}
                                         preserveState
-                                        href={paginationLink.url}
-                                        disabled={!paginationLink.url}
+                                        href={httpsPaginationLink}
+                                        disabled={!httpsPaginationLink}
                                     />
                                 );
                             }
@@ -197,8 +204,8 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                                     <PaginationNext
                                         key={index}
                                         preserveState
-                                        href={paginationLink.url}
-                                        disabled={!paginationLink.url}
+                                        href={httpsPaginationLink}
+                                        disabled={!httpsPaginationLink}
                                     />
                                 );
                             }
@@ -207,7 +214,7 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                                 <PaginationLink
                                     key={index}
                                     preserveState
-                                    href={paginationLink.url}
+                                    href={httpsPaginationLink}
                                 >
                                     {paginationLink.label}
                                 </PaginationLink>

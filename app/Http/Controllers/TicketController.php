@@ -51,7 +51,6 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
-
         $payload = $request->validated();
         $user = Auth::user();
 
