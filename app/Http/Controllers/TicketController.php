@@ -84,6 +84,7 @@ class TicketController extends Controller
                         'filename' => $attachment->getClientOriginalName(),
                         'mime_type' => $attachment->getClientMimeType(),
                         // 'file_dir' => $attachment->store('public'),
+                        'file_dir' => '',
                     ];
 
                     $freshdeskAttachments[] = [
