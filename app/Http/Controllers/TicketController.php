@@ -138,18 +138,17 @@ class TicketController extends Controller
                 $ticket = Ticket::create($payload);
 
                 $ticket->attachments()->createMany($attachments);
+                
                 DB::commit();
 
+                return Redirect::route('tickets.index');
             } else {
-                DB::rollBack();
+                throw new \Exception();
             }
-
-            
-            
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors([
-                'create' => $e->getMessage() ?? "An error occurred while performing this request."
+                'create' => "An error occurred while performing this request."
             ]);
         }
     }
@@ -157,26 +156,24 @@ class TicketController extends Controller
     private function buildMultipartData(array $data)
     {
         $multipart = [];
+
         foreach ($data as $key => $value) {
-            // if ($key != 'custom_fields') {
-                if (is_array($value)) {
-                    foreach ($value as $item) {
-                        // dd($item);
-                        $multipart[] = [
-                            'name' => $key . '[]',
-                            'contents' => $item['file'],
-                            'filename' => $item['file_name']
-                        ];
-                    }
-                } else {
+            if (is_array($value)) {
+                foreach ($value as $item) {
                     $multipart[] = [
-                        'name' => $key,
-                        'contents' => $value
+                        'name' => $key . '[]',
+                        'contents' => $item['file'],
+                        'filename' => $item['file_name']
                     ];
                 }
-            // }
-            
+            } else {
+                $multipart[] = [
+                    'name' => $key,
+                    'contents' => $value
+                ];
+            }
         }
+
         return $multipart;
     }
 
@@ -207,12 +204,16 @@ class TicketController extends Controller
     {
         try {
             $ticket->update($request->validated());
+            
+            // TO DO: also update the ticket in Freshdesk
 
             return Redirect::route('tickets.show', [
                 'ticket' => $ticket
             ]);
         } catch (\Exception $e) {
-            dd($e);
+            return redirect()->back()->withErrors([
+                'create' => "An error occurred while updating the ticket."
+            ]);
         }
 
         
@@ -223,7 +224,6 @@ class TicketController extends Controller
      */
     public function destroy(Ticket $ticket)
     {
-        // get FD ticket and delete it first
-        dd($ticket);
+        // just change the status to closed or cancelled.
     }
 }
