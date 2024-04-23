@@ -105,6 +105,7 @@ class TicketController extends Controller
                 if ($key != 'attachments' && !!$value) {
                     $new_value = $value;
                     $new_key = str_replace(' ', '_', $key);
+
                     if ($key == 'concern_type') {
                         $new_value = ucwords(str_replace(' ', '_', $value));
                     }

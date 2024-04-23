@@ -28,12 +28,24 @@ export default function NonGpoAppServiceForm({
                     htmlFor="gpo_mobile_number"
                     error={errors.gpo_mobile_number}
                     render={
-                        <Input
+                        <PhoneInput
                             id="gpo_mobile_number"
-                            value={data.gpo_mobile_number}
                             editabledisplaymode={editMode}
-                            onChange={(e) => {
-                                setData("gpo_mobile_number", e.target.value);
+                            placeholder="ex: 0999 123 4567"
+                            value={data.gpo_mobile_number}
+                            onBlur={() => {
+                                if (
+                                    data.gpo_mobile_number &&
+                                    !isValidPhoneNumber(data.gpo_mobile_number)
+                                ) {
+                                    setError(
+                                        "gpo_mobile_number",
+                                        "Invalid phone number"
+                                    );
+                                }
+                            }}
+                            onChange={(inputValue) => {
+                                setData("gpo_mobile_number", inputValue);
                                 clearErrors("gpo_mobile_number");
                             }}
                         />
@@ -62,8 +74,8 @@ export default function NonGpoAppServiceForm({
                                 <SelectValue placeholder="Select device type" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="ios">iOS</SelectItem>
                                 <SelectItem value="android">Android</SelectItem>
+                                <SelectItem value="ios">iOS</SelectItem>
                             </SelectContent>
                         </Select>
                     }
@@ -80,6 +92,7 @@ export default function NonGpoAppServiceForm({
                         <Input
                             id="device_model"
                             value={data.device_model}
+                            placeholder="ex: Samsung - Galaxy Z Fold5"
                             editabledisplaymode={editMode}
                             onChange={(e) => {
                                 setData("device_model", e.target.value);

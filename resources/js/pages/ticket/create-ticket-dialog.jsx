@@ -40,10 +40,10 @@ export const CreateTicketDialog = ({
     const { toast } = useToast();
     const [files, setFiles] = useState([]);
 
-    useEffect(() => {
-        // Make sure to revoke the file URIs to avoid memory leaks, will run on unmount
-        return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    }, []);
+    // useEffect(() => {
+    //     // Make sure to revoke the file URIs to avoid memory leaks, will run on unmount
+    //     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
+    // }, []);
 
     useEffect(() => {
         setData("attachments", files);
@@ -275,12 +275,13 @@ export const CreateTicketDialog = ({
                                         </AlertDescription>
                                     </Alert>
                                 )}
-                                {/* <FileDropzone
+
+                                <FileDropzone
                                     files={files}
                                     setFiles={setFiles}
-                                /> */}
+                                />
 
-                                <Input
+                                {/* <Input
                                     id="file-upload"
                                     type="file"
                                     onChange={(e) => {
@@ -288,7 +289,7 @@ export const CreateTicketDialog = ({
 
                                         setData("attachments", e.target.files);
                                     }}
-                                />
+                                /> */}
                             </TabsContent>
                         </ScrollArea>
                     </Tabs>

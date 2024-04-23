@@ -82,14 +82,16 @@ export const FileDropzone = ({ className, files, setFiles }) => {
     const onDrop = useCallback((acceptedFiles) => {
         // add preview property to each file
         if (acceptedFiles?.length > 0) {
-            setFiles((prevFiles) => [
-                ...prevFiles,
-                ...acceptedFiles.map((file) => {
-                    return Object.assign(file, {
-                        preview: URL.createObjectURL(file),
-                    });
-                }),
-            ]);
+            // setFiles((prevFiles) => [
+            //     ...prevFiles,
+            //     ...acceptedFiles.map((file) => {
+            //         return Object.assign(file, {
+            //             preview: URL.createObjectURL(file),
+            //         });
+            //     }),
+            // ]);
+
+            setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
         }
     }, []);
 
@@ -142,7 +144,7 @@ export const FileDropzone = ({ className, files, setFiles }) => {
                         key={`${index}-${file.name}`}
                         className="relative w-[250px] max-w-[300px] h-[250px] rounded-lg flex flex-col border-2"
                     >
-                        {getThumbnail(file)}
+                        {/* {getThumbnail(file)} */}
                         <div className="text-sm p-6">
                             <p className="font-bold text-ellipsis overflow-hidden">
                                 {file.name}

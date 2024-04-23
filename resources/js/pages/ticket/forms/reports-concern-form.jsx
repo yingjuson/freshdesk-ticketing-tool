@@ -107,14 +107,28 @@ export default function ReportsConcernForm({
                             htmlFor="gpo_mobile_number"
                             error={errors.gpo_mobile_number}
                             render={
-                                <Input
+                                <PhoneInput
                                     id="gpo_mobile_number"
-                                    value={data.gpo_mobile_number}
                                     editabledisplaymode={editMode}
-                                    onChange={(e) => {
+                                    placeholder="ex: 0999 123 4567"
+                                    value={data.gpo_mobile_number}
+                                    onBlur={() => {
+                                        if (
+                                            data.gpo_mobile_number &&
+                                            !isValidPhoneNumber(
+                                                data.gpo_mobile_number
+                                            )
+                                        ) {
+                                            setError(
+                                                "gpo_mobile_number",
+                                                "Invalid phone number"
+                                            );
+                                        }
+                                    }}
+                                    onChange={(inputValue) => {
                                         setData(
                                             "gpo_mobile_number",
-                                            e.target.value
+                                            inputValue
                                         );
                                         clearErrors("gpo_mobile_number");
                                     }}
@@ -123,7 +137,7 @@ export default function ReportsConcernForm({
                         />
                     </div>
 
-                    <div className="align-top min-h-20">
+                    {/* <div className="align-top min-h-20">
                         <FormField
                             required
                             label="Transaction amount"
@@ -140,6 +154,30 @@ export default function ReportsConcernForm({
                                         setData(
                                             "transaction_amount",
                                             e.target.value
+                                        );
+                                        clearErrors("transaction_amount");
+                                    }}
+                                />
+                            }
+                        />
+                    </div> */}
+
+                    <div className="align-top min-h-20">
+                        <FormField
+                            required
+                            label="Transaction amount"
+                            htmlFor="transaction_amount"
+                            error={errors.transaction_amount}
+                            render={
+                                <NumericFormat
+                                    value={data.transaction_amount}
+                                    thousandSeparator
+                                    customInput={Input}
+                                    decimalScale={3}
+                                    onValueChange={(values, sourceInfo) => {
+                                        setData(
+                                            "transaction_amount",
+                                            values.value
                                         );
                                         clearErrors("transaction_amount");
                                     }}

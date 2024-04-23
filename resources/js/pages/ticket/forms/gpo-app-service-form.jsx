@@ -14,6 +14,8 @@ import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import { TooltipIcon } from "@/components/custom/tooltip-icon";
 import { Info } from "lucide-react";
 import PhoneInput from "@/components/custom/phone-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import { NumericFormat } from "react-number-format";
 
 const deviceOSTooltip = (
     <div className="text-sm">
@@ -34,6 +36,7 @@ export default function GpoAppServiceForm({
     setData,
     errors,
     reset,
+    setError,
     clearErrors,
 }) {
     const isCustomerMobtelRequired = [
@@ -57,35 +60,6 @@ export default function GpoAppServiceForm({
             clearErrors("customer_mobile_number");
         }
     }, [data.service_type]);
-
-    const getTransactionAmount = () => {
-        // if (data.transaction_amount === '') {
-        //     return 0;
-        // }
-
-        const lastChar = data.transaction_amount.slice(
-            data.transaction_amount.length - 1
-        );
-
-        if (lastChar === ".") {
-            return Number(data.transaction_amount).toLocaleString().lastChar;
-        }
-
-        return Number(data.transaction_amount).toLocaleString();
-    };
-
-    const handleTransactionAmount = (inputAmount) => {
-        let amount = inputAmount.replaceAll(",", "");
-
-        if (isNaN(amount)) return;
-
-        const [baseVal, decimalVal] = inputAmount.split(".");
-
-        if (decimalVal && decimalVal.length > 2) return;
-
-        setData("transaction_amount", amount);
-        clearErrors("transaction_amount");
-    };
 
     return (
         <>
@@ -122,6 +96,17 @@ export default function GpoAppServiceForm({
                             editabledisplaymode={editMode}
                             placeholder="ex: 0999 123 4567"
                             value={data.gpo_mobile_number}
+                            onBlur={() => {
+                                if (
+                                    data.gpo_mobile_number &&
+                                    !isValidPhoneNumber(data.gpo_mobile_number)
+                                ) {
+                                    setError(
+                                        "gpo_mobile_number",
+                                        "Invalid phone number"
+                                    );
+                                }
+                            }}
                             onChange={(inputValue) => {
                                 setData("gpo_mobile_number", inputValue);
                                 clearErrors("gpo_mobile_number");
@@ -131,29 +116,44 @@ export default function GpoAppServiceForm({
                 />
             </div>
 
-            <div className="align-top min-h-20">
-                <FormField
-                    required={isCustomerMobtelRequired}
-                    label="Affected customer mobile number"
-                    htmlFor="customer_mobile_number"
-                    error={errors.customer_mobile_number}
-                    render={
-                        <Input
-                            type="tel"
-                            id="customer_mobile_number"
-                            value={data.customer_mobile_number}
-                            editabledisplaymode={editMode}
-                            onChange={(e) => {
-                                setData(
-                                    "customer_mobile_number",
-                                    e.target.value
-                                );
-                                clearErrors("customer_mobile_number");
-                            }}
-                        />
-                    }
-                />
-            </div>
+            {data.service_type !== "dagdag_pondo" && (
+                <div className="align-top min-h-20">
+                    <FormField
+                        required={isCustomerMobtelRequired}
+                        label="Affected customer mobile number"
+                        htmlFor="customer_mobile_number"
+                        error={errors.customer_mobile_number}
+                        render={
+                            <PhoneInput
+                                id="customer_mobile_number"
+                                editabledisplaymode={editMode}
+                                placeholder="ex: 0999 123 4567"
+                                value={data.customer_mobile_number}
+                                onBlur={() => {
+                                    if (
+                                        data.customer_mobile_number &&
+                                        !isValidPhoneNumber(
+                                            data.customer_mobile_number
+                                        )
+                                    ) {
+                                        setError(
+                                            "customer_mobile_number",
+                                            "Invalid phone number"
+                                        );
+                                    }
+                                }}
+                                onChange={(inputValue) => {
+                                    setData(
+                                        "customer_mobile_number",
+                                        inputValue
+                                    );
+                                    clearErrors("customer_mobile_number");
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            )}
 
             <div className="align-top min-h-20">
                 <FormField
@@ -176,8 +176,8 @@ export default function GpoAppServiceForm({
                                 <SelectValue placeholder="Select device type" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="ios">iOS</SelectItem>
                                 <SelectItem value="android">Android</SelectItem>
+                                <SelectItem value="ios">iOS</SelectItem>
                             </SelectContent>
                         </Select>
                     }
@@ -194,6 +194,7 @@ export default function GpoAppServiceForm({
                         <Input
                             id="device_model"
                             value={data.device_model}
+                            placeholder="ex: Samsung - Galaxy Z Fold5"
                             editabledisplaymode={editMode}
                             onChange={(e) => {
                                 setData("device_model", e.target.value);
@@ -215,6 +216,7 @@ export default function GpoAppServiceForm({
                         <Input
                             id="device_os_version"
                             value={data.device_os_version}
+                            placeholder="ex: 1.6.2 (refer to the tooltip)"
                             editabledisplaymode={editMode}
                             onChange={(e) => {
                                 setData("device_os_version", e.target.value);
@@ -232,13 +234,15 @@ export default function GpoAppServiceForm({
                     htmlFor="transaction_amount"
                     error={errors.transaction_amount}
                     render={
-                        <Input
-                            id="transaction_amount"
-                            editabledisplaymode={editMode}
-                            value={getTransactionAmount()}
-                            onChange={(e) =>
-                                handleTransactionAmount(e.target.value)
-                            }
+                        <NumericFormat
+                            value={data.transaction_amount}
+                            thousandSeparator
+                            customInput={Input}
+                            decimalScale={3}
+                            onValueChange={(values, sourceInfo) => {
+                                setData("transaction_amount", values.value);
+                                clearErrors("transaction_amount");
+                            }}
                         />
                     }
                 />
