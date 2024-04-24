@@ -11,8 +11,6 @@ import { format } from "date-fns";
 import FormField from "@/components/custom/form-field";
 import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
-import { TooltipIcon } from "@/components/custom/tooltip-icon";
-import { Info } from "lucide-react";
 import PhoneInput from "@/components/custom/phone-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { NumericFormat } from "react-number-format";
@@ -61,9 +59,14 @@ export default function GpoAppServiceForm({
         }
     }, [data.service_type]);
 
+    const showCustomerMobtel =
+        data.service_type !== "bills_pay" &&
+        data.service_type !== "dagdag_pondo" &&
+        data.service_type !== "claim_padala";
+
     return (
         <>
-            <div className="align-top min-h-20 col-span-1">
+            <div className="align-top min-h-20">
                 <FormField
                     required
                     label="Service type"
@@ -116,11 +119,11 @@ export default function GpoAppServiceForm({
                 />
             </div>
 
-            {data.service_type !== "dagdag_pondo" && (
+            {showCustomerMobtel && (
                 <div className="align-top min-h-20">
                     <FormField
                         required={isCustomerMobtelRequired}
-                        label="Affected customer mobile number"
+                        label="Customer mobile number"
                         htmlFor="customer_mobile_number"
                         error={errors.customer_mobile_number}
                         render={
@@ -148,6 +151,54 @@ export default function GpoAppServiceForm({
                                         inputValue
                                     );
                                     clearErrors("customer_mobile_number");
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            )}
+
+            {data.service_type === "claim_padala" && (
+                <div className="align-top min-h-20">
+                    <FormField
+                        required
+                        label="GPadala reference number"
+                        htmlFor="gpadala_ref_number"
+                        error={errors.gpadala_ref_number}
+                        render={
+                            <NumericFormat
+                                value={data.gpadala_ref_number}
+                                decimalScale={0}
+                                maxLength={13}
+                                customInput={Input}
+                                placeholder="ex: 1234567890123 (13 digits)"
+                                onValueChange={(values) => {
+                                    setData("gpadala_ref_number", values.value);
+                                    clearErrors("gpadala_ref_number");
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            )}
+
+            {/* TO DO: this is not yet saved. need a new field? */}
+            {data.service_type === "bills_pay" && (
+                <div className="align-top min-h-20">
+                    <FormField
+                        required
+                        label="Reference number"
+                        htmlFor="reference_number"
+                        error={errors.reference_number}
+                        render={
+                            <Input
+                                id="reference_number"
+                                value={data.reference_number}
+                                placeholder="ex: Samsung - Galaxy Z Fold5"
+                                editabledisplaymode={editMode}
+                                onChange={(e) => {
+                                    setData("reference_number", e.target.value);
+                                    clearErrors("reference_number");
                                 }}
                             />
                         }
@@ -237,9 +288,10 @@ export default function GpoAppServiceForm({
                         <NumericFormat
                             value={data.transaction_amount}
                             thousandSeparator
+                            decimalScale={2}
                             customInput={Input}
-                            decimalScale={3}
-                            onValueChange={(values, sourceInfo) => {
+                            placeholder="ex: 1250.05"
+                            onValueChange={(values) => {
                                 setData("transaction_amount", values.value);
                                 clearErrors("transaction_amount");
                             }}
@@ -320,31 +372,6 @@ export default function GpoAppServiceForm({
                         />
                     </div>
                 </>
-            )}
-
-            {data.service_type === "claim_padala" && (
-                <div className="align-top min-h-20">
-                    <FormField
-                        required
-                        label="GPadala reference number"
-                        htmlFor="gpadala_ref_number"
-                        error={errors.gpadala_ref_number}
-                        render={
-                            <Input
-                                id="gpadala_ref_number"
-                                value={data.gpadala_ref_number}
-                                editabledisplaymode={editMode}
-                                onChange={(e) => {
-                                    setData(
-                                        "gpadala_ref_number",
-                                        e.target.value
-                                    );
-                                    clearErrors("gpadala_ref_number");
-                                }}
-                            />
-                        }
-                    />
-                </div>
             )}
         </>
     );

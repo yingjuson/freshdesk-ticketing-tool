@@ -51,6 +51,8 @@ export default function TicketIndex({ auth }) {
         gpo_id: "",
         ext_transaction_id: "",
 
+        reference_number: "",
+
         attachments: [],
     });
 

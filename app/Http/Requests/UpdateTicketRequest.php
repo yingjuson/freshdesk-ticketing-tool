@@ -37,7 +37,7 @@ class UpdateTicketRequest extends FormRequest
             'biller_ref_number.required_if' => 'Biller reference number is required',
             'gpadala_ref_number.required_if' => 'GPadala reference number is required',
             'transaction_datetime.required_if' => 'Transaction date and time is required',
-            'customer_mobile_number.required_if' => 'Affected customer mobile number is required',
+            'customer_mobile_number.required_if' => 'Customer mobile number is required',
         ];
     }
 

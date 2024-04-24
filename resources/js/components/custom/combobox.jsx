@@ -46,7 +46,7 @@ export const Combobox = ({
                     role="combobox"
                     aria-expanded={open}
                     className={cn(
-                        "justify-between font-normal",
+                        "justify-between font-normal overflow-hidden",
                         editabledisplaymode &&
                             "group p-1 border-transparent hover:border-solid hover:border-gray-200 shadow-none",
                         className

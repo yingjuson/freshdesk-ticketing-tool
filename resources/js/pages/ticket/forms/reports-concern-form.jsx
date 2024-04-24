@@ -15,6 +15,8 @@ import { Combobox } from "@/components/custom/combobox";
 import { REPORT_TYPE_SORTED_ASC } from "@/constants/report-constants";
 import { useEffect, useState } from "react";
 import { FileDropzone } from "@/components/custom/file-dropzone";
+import { NumericFormat } from "react-number-format";
+import PhoneInput from "@/components/custom/phone-input";
 
 export default function ReportsConcernForm({
     data,
@@ -137,31 +139,6 @@ export default function ReportsConcernForm({
                         />
                     </div>
 
-                    {/* <div className="align-top min-h-20">
-                        <FormField
-                            required
-                            label="Transaction amount"
-                            htmlFor="transaction_amount"
-                            error={errors.transaction_amount}
-                            render={
-                                <Input
-                                    id="transaction_amount"
-                                    type="number"
-                                    min="0.00"
-                                    value={data.transaction_amount}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData(
-                                            "transaction_amount",
-                                            e.target.value
-                                        );
-                                        clearErrors("transaction_amount");
-                                    }}
-                                />
-                            }
-                        />
-                    </div> */}
-
                     <div className="align-top min-h-20">
                         <FormField
                             required
@@ -172,9 +149,10 @@ export default function ReportsConcernForm({
                                 <NumericFormat
                                     value={data.transaction_amount}
                                     thousandSeparator
+                                    decimalScale={2}
                                     customInput={Input}
-                                    decimalScale={3}
-                                    onValueChange={(values, sourceInfo) => {
+                                    placeholder="ex: 1250.05"
+                                    onValueChange={(values) => {
                                         setData(
                                             "transaction_amount",
                                             values.value

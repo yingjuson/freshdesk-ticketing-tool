@@ -24,6 +24,7 @@ class StoreTicketRequest extends FormRequest
     public function messages()
     {
         return [
+            'gpadala_ref_number.size' => 'Must be exactly 13 digits',
             'required' => ':Attribute is required',
             'required_if' => ':Attribute is required',
             
@@ -31,14 +32,14 @@ class StoreTicketRequest extends FormRequest
             'issue_details.required' => 'This field is required',
 
             'gpo_mobile_number.required' => 'GPO mobile number is required',
-            'transaction_datetime.required' => 'Transaction date and time is required',
+            'transaction_datetime.required' => 'Date and time is required',
 
             'gpo_id.required_if' => 'GPO ID is required',
             'attachments.required_if' => ':Attribute required',
             'biller_ref_number.required_if' => 'Biller reference number is required',
-            'gpadala_ref_number.required_if' => 'GPadala reference number is required',
+            'gpadala_ref_number.required_if' => 'Reference number is required',
             'transaction_datetime.required_if' => 'Transaction date and time is required',
-            'customer_mobile_number.required_if' => 'Affected customer mobile number is required',
+            'customer_mobile_number.required_if' => 'Customer mobile number is required',
         ];
     }
 
@@ -100,7 +101,7 @@ class StoreTicketRequest extends FormRequest
             'device_type'               => ['string', 'required_if:concern_type,gpo_app_service', 'in:ios,android', 'nullable'],
             'biller_name'               => ['string', 'required_if:service_type,bills_pay', 'nullable'],
             'biller_ref_number'         => ['string', 'required_if:service_type,bills_pay', 'nullable'],
-            'gpadala_ref_number'        => ['string', 'required_if:service_type,claim_padala', 'nullable'],
+            'gpadala_ref_number'        => ['string', 'required_if:service_type,claim_padala', 'size:13', 'nullable'],
             'transaction_amount'        => ['numeric', Rule::requiredIf(in_array(request()->get('concern_type'), ['gpo_app_service', 'gpo_service_variance'])), 'nullable'],
             'transaction_datetime'      => ['date_format:Y-m-d H:i', Rule::requiredIf(in_array(request()->get('concern_type'), [...$non_service_related_concerns, 'gpo_app_service', 'gpo_service_variance'])), 'nullable'],
 

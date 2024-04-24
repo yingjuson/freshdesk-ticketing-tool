@@ -130,7 +130,7 @@ export const FileDropzone = ({ className, files, setFiles }) => {
                 <div className="flex gap-1 text-sm text-gray-400">
                     <p>Accepted file types</p>
                     <TooltipIcon
-                        icon={<Info size="18" color="blue" strokeWidth={1.5} />}
+                        icon={<Info size="20" color="blue" />}
                         content={getAcceptedFileTypes()}
                     />
                 </div>

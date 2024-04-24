@@ -26,7 +26,7 @@ import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-import { ShieldAlert, RotateCcw, Info, XCircle } from "lucide-react";
+import { ShieldAlert, RotateCcw } from "lucide-react";
 
 export const CreateTicketDialog = ({
     isOpen,
@@ -39,11 +39,6 @@ export const CreateTicketDialog = ({
 
     const { toast } = useToast();
     const [files, setFiles] = useState([]);
-
-    // useEffect(() => {
-    //     // Make sure to revoke the file URIs to avoid memory leaks, will run on unmount
-    //     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-    // }, []);
 
     useEffect(() => {
         setData("attachments", files);
@@ -66,8 +61,7 @@ export const CreateTicketDialog = ({
 
         reset();
         clearErrors();
-
-        console.log("rset everthgin");
+        setFiles([]);
     };
 
     const handleSubmit = (e) => {
@@ -132,8 +126,6 @@ export const CreateTicketDialog = ({
                 return null;
         }
     };
-
-    console.log({ errors, selectedConcern });
 
     return (
         <Dialog
@@ -280,16 +272,6 @@ export const CreateTicketDialog = ({
                                     files={files}
                                     setFiles={setFiles}
                                 />
-
-                                {/* <Input
-                                    id="file-upload"
-                                    type="file"
-                                    onChange={(e) => {
-                                        console.log(e.target.files);
-
-                                        setData("attachments", e.target.files);
-                                    }}
-                                /> */}
                             </TabsContent>
                         </ScrollArea>
                     </Tabs>
@@ -311,6 +293,7 @@ export const CreateTicketDialog = ({
                         </div>
                         <Button
                             variant="ghost"
+                            disabled={processing}
                             className="flex gap-1 text-primary hover:bg-color-none hover:text-primary"
                             onClick={handleResetFields}
                         >
