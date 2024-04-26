@@ -55,6 +55,8 @@ export const CreateTicketDialog = ({
         setData("attachments", files);
     }, [files]);
 
+    console.log({ errors });
+
     const detailsTabHasError = () => {
         if (errors.length === 0) return false;
         const { issue_details, subject, ...errorsCopy } = errors;

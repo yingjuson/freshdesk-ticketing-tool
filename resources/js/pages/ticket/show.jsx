@@ -128,6 +128,7 @@ export default function ShowEdit({ auth }) {
                 });
             },
             onError: (errors) => {
+                console.log({ errors });
                 toast({
                     title: "Error",
                     description: "Failed to update ticket.",

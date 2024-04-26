@@ -93,7 +93,7 @@ class StoreTicketRequest extends FormRequest
             'gpo_bulk_distro_transfer',
         ];
 
-        $accepted_file_types = ['png', 'gif', 'apng', 'avif', 'webp', 'jpg', 'jpeg', 'svg', 'mp4', 'ogv', 'mpeg', 'webm', '3gp', '3g2', 'avi', 'pdf'];
+        $accepted_file_types = ['png', 'gif', 'apng', 'avif', 'webp', 'jpg', 'jpeg', 'svg', 'mp4', 'ogv', 'mpeg', 'webm', '3gp', '3g2', 'avi', 'pdf', 'csv', 'xls', 'xlsx'];
 
         return [
             'concern_type'              => ['string', 'required'],
