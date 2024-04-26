@@ -37,15 +37,7 @@ class TicketController extends Controller
           'tickets' => $tickets
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+    
     /**
      * Store a newly created resource in storage.
      */
@@ -191,22 +183,12 @@ class TicketController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
+    public function update(StoreTicketRequest $request, Ticket $ticket)
     {
         try {
             $ticket->update($request->validated());
-            
-            // TO DO: also update the ticket in Freshdesk
 
             return Redirect::route('tickets.show', [
                 'ticket' => $ticket

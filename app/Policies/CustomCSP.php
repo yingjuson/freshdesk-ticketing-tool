@@ -12,8 +12,8 @@ class CustomCSP extends Basic
     {
         parent::configure();
         
-        $this->addDirective(Directive::DEFAULT, [Keyword::SELF, Keyword::UNSAFE_INLINE, 'http:', 'https:', 'ws:', 'wss:', 'blob:'])
-        // $this->addDirective(Directive::DEFAULT, [Keyword::SELF, 'http:', 'https:', 'ws:', 'wss:', 'blob:'])
-            ->addDirective(Directive::STYLE, [Keyword::SELF, 'https://fonts.bunny.net']);
+        // $this->addDirective(Directive::DEFAULT, [Keyword::SELF, Keyword::UNSAFE_INLINE, 'http:', 'https:', 'ws:', 'wss:', 'blob:'])
+        $this->addDirective(Directive::DEFAULT, [Keyword::SELF, 'http:', 'https:', 'ws:', 'wss:', 'blob:'])
+            ->addDirective(Directive::STYLE, [Keyword::SELF, 'https://fonts.gstatic.com', 'https://fonts.googleapis.com']);
     }
 }

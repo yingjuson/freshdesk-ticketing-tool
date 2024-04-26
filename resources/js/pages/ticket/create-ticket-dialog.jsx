@@ -23,7 +23,10 @@ import OtherRequestForm from "./forms/other-request-form";
 
 import GpoAppServiceForm from "./forms/gpo-app-service-form";
 import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
-import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
+import {
+    CONCERNS_REQUIRING_ATTACHMENT,
+    GROUPED_CONCERN_TYPES,
+} from "@/constants/concern-type-constants";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { ShieldAlert, RotateCcw } from "lucide-react";
@@ -34,8 +37,16 @@ export const CreateTicketDialog = ({
     selectedConcern,
     ...props
 }) => {
-    const { data, setData, post, processing, errors, clearErrors, reset } =
-        props;
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        clearErrors,
+        setDefaults,
+        reset,
+    } = props;
 
     const { toast } = useToast();
     const [files, setFiles] = useState([]);
@@ -59,7 +70,30 @@ export const CreateTicketDialog = ({
     const handleResetFields = (e) => {
         e.preventDefault();
 
-        reset();
+        reset(
+            "service_type",
+            "subject",
+            "issue_details",
+            "customer_mobile_number",
+            "gpo_mobile_number",
+            "biller_name",
+            "biller_ref_number",
+            "device_type",
+            "device_model",
+            "device_os_version",
+            "gpadala_ref_number",
+            "transaction_amount",
+            "transaction_datetime",
+            "created_by",
+            "assignee_id",
+            "webtool_role",
+            "portal_type",
+            "report_type",
+            "report_date",
+            "gpo_id",
+            "ext_transaction_id",
+            "reference_number"
+        );
         clearErrors();
         setFiles([]);
     };
@@ -89,11 +123,9 @@ export const CreateTicketDialog = ({
     };
 
     const getHelperText = () => {
-        if (data.concern_type === "additional_recipient") {
-            return "Please provide the email(s) to be added, and the GPO report(s) to receive";
-        }
-
-        return "If error message is displayed, please specify";
+        return data.concern_type === "additional_recipient"
+            ? "Please provide the email(s) to be added, and the GPO report(s) to receive"
+            : "If error message is displayed, please specify";
     };
 
     // Determine the group of the selected concern
@@ -245,30 +277,33 @@ export const CreateTicketDialog = ({
 
                             <TabsContent
                                 value="attachments"
-                                className="flex flex-col justify-center items-center gap- px-1"
+                                className="flex flex-col justify-center items-center gap-2 px-1"
                             >
-                                {selectedConcern ===
-                                    "distro_mapping_update" && (
+                                {CONCERNS_REQUIRING_ATTACHMENT.includes(
+                                    selectedConcern
+                                ) && (
                                     <Alert
                                         variant={
                                             errors.attachments
                                                 ? "destructive"
                                                 : "warning"
                                         }
-                                        className="w-fit py-2"
+                                        className="w-5/6 py-2"
                                     >
                                         <ShieldAlert size="18" />
                                         <AlertTitle>
                                             Attachment required
                                         </AlertTitle>
                                         <AlertDescription>
-                                            Please provide the updated file of
-                                            the distro mapping
+                                            {
+                                                "Please attach necessary file(s) to your request"
+                                            }
                                         </AlertDescription>
                                     </Alert>
                                 )}
 
                                 <FileDropzone
+                                    concernType={data.concern_type}
                                     files={files}
                                     setFiles={setFiles}
                                 />
@@ -277,46 +312,44 @@ export const CreateTicketDialog = ({
                     </Tabs>
                 </form>
 
-                <div>
-                    <DialogFooter>
-                        <div
-                            id="mandatory-footnote"
-                            className="flex flex-grow items-center justify-center text-xs font-bold"
-                        >
-                            <p className="w-5/6 text-center py-2 bg-yellow-50 border border-solid border-yellow-400 rounded-md">
-                                All mandatory fields
-                                <span className="text-sm text-rose-700">
-                                    *
-                                </span>{" "}
-                                must be filled out before submitting
-                            </p>
-                        </div>
-                        <Button
-                            variant="ghost"
-                            disabled={processing}
-                            className="flex gap-1 text-primary hover:bg-color-none hover:text-primary"
-                            onClick={handleResetFields}
-                        >
-                            <RotateCcw size="16" />
-                            Reset all fields
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            disabled={processing}
-                            onClick={handleCancelClick}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            form="create-ticket-form"
-                            disabled={processing}
-                        >
-                            Submit
-                        </Button>
-                    </DialogFooter>
-                </div>
+                <DialogFooter>
+                    <div
+                        id="mandatory-footnote"
+                        className="flex flex-grow items-center justify-center text-xs font-semibold"
+                    >
+                        <p className="w-full text-center py-2 bg-yellow-50 border border-solid border-yellow-400 rounded-md">
+                            All mandatory fields
+                            <span className="text-sm text-rose-700">
+                                *
+                            </span>{" "}
+                            must be filled out before submitting
+                        </p>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        disabled={processing}
+                        className="flex gap-1 text-primary hover:bg-color-none hover:text-primary"
+                        onClick={handleResetFields}
+                    >
+                        <RotateCcw size="16" />
+                        Reset all fields
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        disabled={processing}
+                        onClick={handleCancelClick}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        form="create-ticket-form"
+                        disabled={processing}
+                    >
+                        Submit
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

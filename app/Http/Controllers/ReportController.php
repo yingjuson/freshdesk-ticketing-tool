@@ -13,7 +13,8 @@ class ReportController extends Controller
         $rows = [];
         $file_type = $request->input('file_type') == 'csv' ? '.csv' : '.xlsx';
 
-        Ticket::whereBetween('created_at', [$request->input('start_date'), $request->input('end_date')])
+        Ticket::whereDate('created_at', '>=', $request->input('start_date'))
+            ->whereDate('created_at', '<=', $request->input('end_date'))
             ->chunk(2000, function ($tickets) use (&$rows) {
                 foreach ($tickets->toArray() as $ticket) {
                     $rows[] = $ticket;
