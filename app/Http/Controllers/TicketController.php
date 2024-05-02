@@ -33,11 +33,36 @@ class TicketController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('welcome',);
+        return Inertia::render('welcome');
         // return Inertia::render('ticket/index', [
         //   'tickets' => $tickets
         // ]);
     }
+
+    public function test(Request $request)
+    {
+        $tickets = Ticket::query()
+            ->when($request->input('search'), function ($query, $search) {
+                $query->where('subject', 'like', '%' . $search . '%')
+                ->orWhere('concern_type', 'like', '%' . $search . '%')
+                ->orWhere('id', 'like', '%' . $search . '%');
+            })
+            ->with('creator')
+            ->orderBy("created_at", 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        // return Inertia::render('welcome');
+        return Inertia::render('ticket/index', [
+          'tickets' => $tickets
+        ]);
+    }
+
+    public function test_no_tix(Request $request)
+    {
+        return Inertia::render('ticket/index');
+    }
+    
     
     /**
      * Store a newly created resource in storage.
