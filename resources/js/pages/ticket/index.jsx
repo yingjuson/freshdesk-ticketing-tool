@@ -116,7 +116,9 @@ export default function TicketIndex({ auth }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <DataTable columns={columns} {...tickets} />
+                        {tickets && tickets.length > 0 && (
+                            <DataTable columns={columns} {...tickets} />
+                        )}
 
                         {isDialogOpen && (
                             <CreateTicketDialog
