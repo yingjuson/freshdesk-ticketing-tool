@@ -33,9 +33,10 @@ class TicketController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return Inertia::render('ticket/index', [
-          'tickets' => $tickets
-        ]);
+        return Inertia::render('welcome',);
+        // return Inertia::render('ticket/index', [
+        //   'tickets' => $tickets
+        // ]);
     }
     
     /**
@@ -198,8 +199,6 @@ class TicketController extends Controller
                 'create' => "An error occurred while updating the ticket."
             ]);
         }
-
-        
     }
 
     /**
