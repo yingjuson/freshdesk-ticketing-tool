@@ -28,7 +28,7 @@ class DashboardController extends Controller
 
         $unassigned_tickets = Ticket::whereNull('assignee_id')->count();
 
-        return Inertia::render('ticket/index', [
+        return Inertia::render('dashboard', [
             'newTicketsThisWeek'    => $new_tickets_this_week,
             'closedTicketsThisWeek' => $new_tickets_this_week,
             'ongoingTickets'        => $ongoing_tickets,

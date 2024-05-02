@@ -36,9 +36,9 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/testroute', [TicketController::class, 'test'])->name('tickets.test');
+    Route::get('/test', [TicketController::class, 'test'])->name('tickets.test');
 
-    Route::get('/test-no-tix', [TicketController::class, 'test_no_tix'])->name('tickets.testnotix');
+    Route::get('/test2', [TicketController::class, 'test2'])->name('tickets.test2');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
