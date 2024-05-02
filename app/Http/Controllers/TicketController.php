@@ -40,10 +40,23 @@ class TicketController extends Controller
 
     public function test(Request $request)
     {
-        return Inertia::render('ticket/index');
+        $tickets = Ticket::query()
+            ->when($request->input('search'), function ($query, $search) {
+                $query->where('subject', 'like', '%' . $search . '%')
+                ->orWhere('concern_type', 'like', '%' . $search . '%')
+                ->orWhere('id', 'like', '%' . $search . '%');
+            })
+            ->with('creator')
+            ->orderBy("created_at", 'desc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return Inertia::render('dashboard', [
+          'tickets' => $tickets
+        ]);
     }
 
-    public function test2(Ticket $ticket)
+    public function testshow(Ticket $ticket)
     {
         $ticket->load('attachments');
 

@@ -67,14 +67,7 @@ export default function TicketIndex({ auth }) {
     };
 
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            // header={
-            //     <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-            //         Ticket
-            //     </h2>
-            // }
-        >
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Ticket" />
 
             <div className="py-6">
@@ -116,9 +109,7 @@ export default function TicketIndex({ auth }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        {tickets && tickets.length > 0 && (
-                            <DataTable columns={columns} {...tickets} />
-                        )}
+                        <DataTable columns={columns} {...tickets} />
 
                         {isDialogOpen && (
                             <CreateTicketDialog

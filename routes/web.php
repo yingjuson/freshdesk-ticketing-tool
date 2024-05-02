@@ -38,7 +38,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::get('/test', [TicketController::class, 'test'])->name('tickets.test');
 
-    Route::get('/test2', [TicketController::class, 'test2'])->name('tickets.test2');
+    Route::get('/testshow', [TicketController::class, 'testshow'])->name('tickets.testshow');
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
