@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\TotalAttachmentSize;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
@@ -24,18 +25,21 @@ class UpdateTicketRequest extends FormRequest
     public function messages()
     {
         return [
+            'gpadala_ref_number.size' => 'Must be exactly 13 digits',
             'required' => ':Attribute is required',
             'required_if' => ':Attribute is required',
             
             'webtool_role.required' => 'Role is required',
             'issue_details.required' => 'This field is required',
+            'device_os_version.required' => 'Device OS version is required',
 
             'gpo_mobile_number.required' => 'GPO mobile number is required',
-            'transaction_datetime.required' => 'Transaction date and time is required',
+            'transaction_datetime.required' => 'Date and time is required',
 
             'gpo_id.required_if' => 'GPO ID is required',
+            'attachments.required_if' => ':Attribute required',
             'biller_ref_number.required_if' => 'Biller reference number is required',
-            'gpadala_ref_number.required_if' => 'GPadala reference number is required',
+            'gpadala_ref_number.required_if' => 'Reference number is required',
             'transaction_datetime.required_if' => 'Transaction date and time is required',
             'customer_mobile_number.required_if' => 'Customer mobile number is required',
         ];
@@ -50,7 +54,7 @@ class UpdateTicketRequest extends FormRequest
     {
         $customer_mobtel_required = [
             'cash_in_via_mobtel',
-            'cash_in_via_code',
+            // 'cash_in_via_code',
             'pa_konsulta',
             'send_load',
             'cash_out',
@@ -85,19 +89,36 @@ class UpdateTicketRequest extends FormRequest
             'distributor_portal'
         ];
 
+        $concern_types_requiring_attachments = [
+            'data_request',
+            'gpo_app_service',
+            'distro_mapping_update',
+            'gpo_bulk_distro_transfer',
+        ];
+
+        $test = [
+            'gpo_app_service',
+            'partially_approved_gpo'
+        ];
+
+        // $test = 'gpo_app_service,partially_approved_gpo';
+
+        $accepted_file_types = ['png', 'gif', 'apng', 'avif', 'webp', 'jpg', 'jpeg', 'svg', 'mp4', 'ogv', 'mpeg', 'webm', '3gp', '3g2', 'avi', 'pdf', 'csv', 'xls', 'xlsx'];
+
         return [
             'concern_type'              => ['string', 'required'],
             'service_type'              => ['string', 'required_if:concern_type,gpo_app_service', 'nullable'],
             'subject'                   => ['required', 'string'],
+            'status'                    => ['required', 'string'],
             'issue_details'             => ['required', 'string'],
             'customer_mobile_number'    => ['string', Rule::requiredIf(request()->get('concern_type') == 'gpo_app_service' && in_array(request()->get('service_type'), $customer_mobtel_required)), 'nullable'],
             'gpo_mobile_number'         => ['string', Rule::requiredIf(in_array(request()->get('concern_type'), [...$gpo_app_related, 'gpo_service_variance'])), 'nullable'],
             'device_model'              => ['string', Rule::requiredIf(in_array(request()->get('concern_type'), $gpo_app_related)), 'nullable'],
             'device_os_version'         => ['string', Rule::requiredIf(in_array(request()->get('concern_type'), $gpo_app_related)), 'nullable'],
-            'device_type'               => ['string', 'required_if:concern_type,gpo_app_service', 'in:ios,android', 'nullable'],
+            'device_type'               => ['string', 'required_if:concern_type,' . implode(',', $test), 'in:ios,android', 'nullable'],
             'biller_name'               => ['string', 'required_if:service_type,bills_pay', 'nullable'],
             'biller_ref_number'         => ['string', 'required_if:service_type,bills_pay', 'nullable'],
-            'gpadala_ref_number'        => ['string', 'required_if:service_type,claim_padala', 'nullable'],
+            'gpadala_ref_number'        => ['string', 'required_if:service_type,claim_padala', 'size:13', 'nullable'],
             'transaction_amount'        => ['numeric', Rule::requiredIf(in_array(request()->get('concern_type'), ['gpo_app_service', 'gpo_service_variance'])), 'nullable'],
             'transaction_datetime'      => ['date_format:Y-m-d H:i', Rule::requiredIf(in_array(request()->get('concern_type'), [...$non_service_related_concerns, 'gpo_app_service', 'gpo_service_variance'])), 'nullable'],
 
@@ -109,8 +130,10 @@ class UpdateTicketRequest extends FormRequest
             'gpo_id'                    => ['required_if:concern_type,gpo_service_variance', 'string', 'nullable'],
 
             'ext_transaction_id'        => ['required_if:concern_type,gpo_service_variance', 'string', 'nullable'],
-            
-            'attachments.*'             => [File::types(['png', 'jpg', 'jpeg', 'pdf', 'mp4']), 'nullable']
+
+            // 'attachments.*'             => ['required_if:concern_type,distro_mapping_update', File::types($accepted_file_types), 'nullable']
+            'attachments'               => [Rule::requiredIf(in_array(request()->get('concern_type'), $concern_types_requiring_attachments)), new TotalAttachmentSize, 'nullable'],
+            'attachments.*'             => ['required', File::types($accepted_file_types), 'nullable']
         ];
     }
 }

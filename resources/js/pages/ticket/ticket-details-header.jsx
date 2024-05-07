@@ -4,6 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Circle } from "lucide-react";
+import FormField from "@/components/custom/form-field";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 const TicketDetailsHeader = ({
     ticket,
@@ -37,20 +45,47 @@ const TicketDetailsHeader = ({
         </div>
 
         <div className="bg-slate-100 w-full py-2 px-4 rounded-md">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1 w-96 text-sm">
-                <div className="grid grid-cols-3 col-span-1">
+            <div className="grid grid-cols-2 gap-x-10 gap-y-1 w-[27rem] text-sm items-center">
+                <div className="grid grid-cols-3 col-span-1 items-center gap-1">
                     <div className="col-span-1">Status</div>
-                    <div className="col-span-2 flex items-center gap-1">
-                        <Circle
-                            color={
-                                ticket.status === "in_progress"
-                                    ? "lightgray"
-                                    : STATUS_COLORS[ticket.status]
+                    <div className="col-span-2 flex gap-1">
+                        <FormField
+                            htmlFor="status"
+                            error={errors.status}
+                            render={
+                                <Select
+                                    id="status"
+                                    defaultValue={ticket.status}
+                                    onValueChange={(value) => {
+                                        setData("status", value);
+                                        clearErrors("status");
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full py-1 w-36 h-fit gap-1 bg-white">
+                                        <Circle
+                                            color={STATUS_COLORS[data.status]}
+                                            fill={STATUS_COLORS[data.status]}
+                                            size="12"
+                                        />
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="open">
+                                            Open
+                                        </SelectItem>
+                                        <SelectItem value="pending">
+                                            Pending
+                                        </SelectItem>
+                                        <SelectItem value="resolved">
+                                            Resolved
+                                        </SelectItem>
+                                        <SelectItem value="closed">
+                                            Closed
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                             }
-                            fill={STATUS_COLORS[ticket.status]}
-                            size="12"
                         />
-                        <div>{ticket.status}</div>
                     </div>
                 </div>
 

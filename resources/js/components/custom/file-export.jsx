@@ -12,7 +12,10 @@ import { Download } from "lucide-react";
 export const FileExport = () => (
     <Popover>
         <PopoverTrigger asChild>
-            <Button variant="ghost" className="gap-2 ml-4">
+            <Button
+                variant="ghost"
+                className="gap-2 ml-4 text-primary font-semibold"
+            >
                 <Download size="16" />
                 Export
             </Button>

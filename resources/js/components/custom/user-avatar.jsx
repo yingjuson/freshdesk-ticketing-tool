@@ -11,7 +11,7 @@ const UserAvatar = ({ name, imageUrl }) => {
     return (
         <Avatar>
             <AvatarImage src={imageUrl} alt={nameInitials} />
-            <AvatarFallback className="bg-blue-500 text-white">
+            <AvatarFallback className="bg-primary text-white">
                 {nameInitials}
             </AvatarFallback>
         </Avatar>

@@ -8,6 +8,7 @@ const badgeVariants = cva(
     {
         variants: {
             variant: {
+                // main
                 default:
                     "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
                 secondary:
@@ -17,17 +18,19 @@ const badgeVariants = cva(
                 outline: "text-foreground",
                 success:
                     "success group border-green-600 bg-green-600 text-neutral-50",
-                amber: "amber group border-amber-500 bg-amber-500 text-neutral-50",
-                sky: "group bg-sky-800 border-sky-800 text-neutral-50",
 
-                // status
-                new: "bg-red-100 border-red-100 hover:bg-red-200 hover:border-red-200 text-black font-medium",
-                inProgress:
+                // custom concern variants
+                amber: "amber group border-amber-500 bg-amber-500 text-neutral-50",
+                indigo: "group bg-indigo-300 border-indigo-300 text-black font-medium shadow",
+                blue: "border-transparent bg-blue-300 text-black font-medium shadow hover:bg-blue-400",
+
+                // custom status variants
+                open: "bg-red-100 border-red-100 hover:bg-red-200 hover:border-red-200 text-black font-medium",
+                closed: "bg-slate-200 border-slate-200 hover:bg-slate-300 hover:border-slate-300 text-black font-medium",
+                pending:
                     "bg-yellow-100 border-yellow-100 hover:bg-yellow-200 hover:border-yellow-200 text-black font-medium",
-                // cancelled:
-                //     "bg-yellow-100 hover:bg-yellow-200 text-black font-medium",
                 resolved:
-                    "bg-lime-200 border-lime-100 hover:bg-lime-300 hover:border-lime-300 text-black font-medium",
+                    "bg-green-200 border-green-100 hover:bg-green-300 hover:border-green-300 text-black font-medium",
             },
         },
         defaultVariants: {

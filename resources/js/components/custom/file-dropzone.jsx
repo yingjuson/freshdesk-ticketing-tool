@@ -2,13 +2,13 @@ import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, Info, XCircle } from "lucide-react";
 
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-
 import { cn } from "@/lib/utils";
-import { formatByteUnits } from "@/utils/file-utils";
-import PdfSvg from "../../../assets/pdf-svg.png";
+import { formatByteUnits, isFileSizeTooLarge } from "@/utils/file-utils";
 import { TooltipIcon } from "./tooltip-icon";
-import { CONCERNS_REQUIRING_ATTACHMENT } from "@/constants/concern-type-constants";
+import {
+    CONCERNS_ACCEPTING_ONLY_EXCEL_FORMAT,
+    CONCERNS_REQUIRING_ATTACHMENT,
+} from "@/constants/concern-type-constants";
 
 const SUPPORTED_FILE_TYPES = {
     "text/csv": [".csv"],
@@ -42,7 +42,7 @@ const getAcceptedFileTypesTooltip = (concernType) => {
 };
 
 const getAcceptedFileTypes = (concernType) => {
-    if (CONCERNS_REQUIRING_ATTACHMENT.includes(concernType)) {
+    if (CONCERNS_ACCEPTING_ONLY_EXCEL_FORMAT.includes(concernType)) {
         return {
             "application/vnd.ms-excel": [".xls"],
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
@@ -101,40 +101,53 @@ const getAcceptedFileTypes = (concernType) => {
 //     }
 // };
 
-export const FileDropzone = ({ className, concernType, files, setFiles }) => {
-    const onDrop = useCallback((acceptedFiles) => {
-        // add preview property to each file
-        if (acceptedFiles?.length > 0) {
-            // setFiles((prevFiles) => [
-            //     ...prevFiles,
-            //     ...acceptedFiles.map((file) => {
-            //         return Object.assign(file, {
-            //             preview: URL.createObjectURL(file),
-            //         });
-            //     }),
-            // ]);
+export const FileDropzone = ({
+    className,
+    concernType,
+    files,
+    setFiles,
+    setError,
+}) => {
+    const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+        if (rejectedFiles?.length > 0) {
+            setError(
+                "attachments",
+                `Uploaded ${rejectedFiles.length} file(s) with invalid type`
+            );
+        }
 
+        if (acceptedFiles?.length > 0) {
             setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
         }
     }, []);
 
     const removeFile = (fileName) => {
-        setFiles((currentFiles) =>
-            currentFiles.filter((file) => file.name !== fileName)
-        );
+        setFiles((currentFiles) => {
+            const answer = currentFiles.filter(
+                (file) => file.name !== fileName
+            );
+
+            return answer;
+        });
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: getAcceptedFileTypes(concernType),
+        // maxSize: 1024 * 20 * 1024, // 20 MB
     });
+
+    const totalFileSizeInBytes = files.reduce(
+        (accu, { size }) => accu + size,
+        0
+    );
 
     return (
         <div className="flex flex-col w-full h-full items-center">
             <div
                 {...getRootProps({
                     className: cn(
-                        "w-5/6 h-14 p-4 border-2 border-dashed border-gray-300 rounded-lg flex justify-center items-center gap-3",
+                        "flex justify-center items-center gap-3 cursor-pointer w-5/6 h-14 p-4 border-2 border-dashed border-gray-300 rounded-lg",
                         className
                     ),
                 })}
@@ -149,37 +162,53 @@ export const FileDropzone = ({ className, concernType, files, setFiles }) => {
                 </>
             </div>
 
-            <div className="flex justify-between mt-1 w-3/4">
-                <div className="flex gap-1 text-sm text-gray-400">
-                    <p>Accepted file types</p>
+            <div className="flex justify-between mt-1 w-5/6 text-sm">
+                <div className="flex gap-1 ">
+                    <span>Accepted file types</span>
                     <TooltipIcon
-                        icon={<Info size="20" color="blue" />}
+                        icon={<Info size="20" color="white" fill="gray" />}
                         content={getAcceptedFileTypesTooltip(concernType)}
                     />
                 </div>
 
-                <p className="text-sm text-gray-400">Total file size: 20MB</p>
+                <span className="flex gap-1">
+                    Total file size:
+                    <span
+                        className={
+                            isFileSizeTooLarge(totalFileSizeInBytes, 20)
+                                ? "text-rose-500 font-semibold"
+                                : ""
+                        }
+                    >
+                        {formatByteUnits(totalFileSizeInBytes) || 0}
+                    </span>
+                    / 20 MB
+                </span>
             </div>
 
-            <div id="thumbs" className="my-4 mx-2 flex flex-wrap gap-2 h-full">
+            <div
+                id="thumbs"
+                className="my-4 mx-2 flex flex-wrap gap-2 h-full w-full"
+            >
                 {files.map((file, index) => (
                     <div
                         key={`${index}-${file.name}`}
-                        className="relative w-[250px] max-w-[300px] h-[250px] rounded-lg flex flex-col border-2"
+                        className="relative h-fit w-full rounded-lg flex items-center justify-between p-3 border-2"
                     >
                         {/* {getThumbnail(file)} */}
-                        <div className="text-sm p-6">
-                            <p className="font-bold text-ellipsis overflow-hidden">
+                        <div className="text-sm">
+                            <p className="font-semibold text-ellipsis overflow-hidden">
                                 {file.name}
                             </p>
-                            <p className="text-sm">
+                            <p className="text-inherit">
                                 {formatByteUnits(file.size)}
                             </p>
                         </div>
                         <XCircle
                             color="white"
                             fill="red"
-                            className="cursor-pointer absolute -right-2 -top-2"
+                            // className="cursor-pointer absolute -right-2 -top-2"
+                            className="cursor-pointer"
                             onClick={() => removeFile(file.name)}
                         />
                     </div>

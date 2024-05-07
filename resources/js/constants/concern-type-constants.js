@@ -102,7 +102,16 @@ export const CONCERN_TYPES = [
     },
 ];
 
+// TO DO: move to file util or constant
 export const CONCERNS_REQUIRING_ATTACHMENT = [
+    "gpo_bulk_distro_transfer",
+    "distro_mapping_update",
+    "gpo_app_service",
+    "data_request",
+];
+
+// TO DO: move to file util or constant
+export const CONCERNS_ACCEPTING_ONLY_EXCEL_FORMAT = [
     "gpo_bulk_distro_transfer",
     "distro_mapping_update",
     "data_request",

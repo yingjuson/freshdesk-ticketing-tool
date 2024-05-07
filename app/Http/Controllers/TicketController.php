@@ -38,7 +38,7 @@ class TicketController extends Controller
         ]);
     }
 
-    public function test(Request $request)
+    public function test_dashboard_with_ticket_props(Request $request)
     {
         $tickets = Ticket::query()
             ->when($request->input('search'), function ($query, $search) {
@@ -56,11 +56,18 @@ class TicketController extends Controller
         ]);
     }
 
-    public function testshow(Ticket $ticket)
+    public function test_show_with_ticket_attachments(Ticket $ticket)
     {
         $ticket->load('attachments');
 
-        return Inertia::render('ticket/show2', [
+        return Inertia::render('ticket/test-show', [
+          'ticket' => $ticket
+        ]);
+    }
+
+    public function test_show(Ticket $ticket)
+    {
+        return Inertia::render('ticket/test-show', [
           'ticket' => $ticket
         ]);
     }
@@ -72,6 +79,8 @@ class TicketController extends Controller
     {
         $payload = $request->validated();
         $user = Auth::user();
+
+        $DO_NOT_POST = false;
 
         $client = new Client([
             'base_uri' => "https://" . env('FRESHDESK_DOMAIN') . ".freshdesk.com/api/v2/",
@@ -121,7 +130,7 @@ class TicketController extends Controller
             $description = '';
 
             foreach ($payload as $key => $value) {
-                if ($key != 'attachments' && !!$value) {
+                if ($key != 'attachments' && $key != 'issue_details' && !!$value) {
                     $new_value = $value;
                     $new_key = str_replace(' ', '_', $key);
 
@@ -145,15 +154,7 @@ class TicketController extends Controller
                 "status" => 2,
             ];
 
-            // Send request
-            $response = $client->post('tickets', [
-                'multipart' => $this->buildMultipartData($freshdeskTicketData),
-            ]);
-
-            if ($response->getStatusCode() === 201) {
-                $responseData = json_decode($response->getBody(), true);
-                // create Ticket here with Freshdesk Ticket number
-                $payload['freshdesk_ticket_number'] = $responseData['id'];
+            if ($DO_NOT_POST) {
                 $payload['created_by'] = $user->id;
                 $ticket = Ticket::create($payload);
 
@@ -163,8 +164,29 @@ class TicketController extends Controller
 
                 return Redirect::route('tickets.index');
             } else {
-                throw new \Exception();
+                // Send request
+                $response = $client->post('tickets', [
+                    'multipart' => $this->buildMultipartData($freshdeskTicketData),
+                ]);
+
+                if ($response->getStatusCode() === 201) {
+                    $responseData = json_decode($response->getBody(), true);
+                    // create Ticket here with Freshdesk Ticket number
+                    $payload['freshdesk_ticket_number'] = $responseData['id'];
+                    $payload['created_by'] = $user->id;
+                    $ticket = Ticket::create($payload);
+
+                    $ticket->attachments()->createMany($attachments);
+                    
+                    DB::commit();
+
+                    return Redirect::route('tickets.index');
+                } else {
+                    throw new \Exception();
+                }
             }
+
+            
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withErrors([
@@ -215,14 +237,22 @@ class TicketController extends Controller
     public function update(StoreTicketRequest $request, Ticket $ticket)
     {
         try {
-            $ticket->update($request->validated());
+            $validatedRequest = $request->validated();
+
+            if ($validatedRequest['status'] == 'resolved' || $validatedRequest['status'] == 'closed') {
+                $validatedRequest['closed_at'] = now();
+            } else {
+                $validatedRequest['closed_at'] = NULL;
+            }
+
+            $ticket->update($validatedRequest);
 
             return Redirect::route('tickets.show', [
                 'ticket' => $ticket
             ]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors([
-                'create' => "An error occurred while updating the ticket."
+                'update' => "An error occurred while updating the ticket."
             ]);
         }
     }
@@ -232,6 +262,6 @@ class TicketController extends Controller
      */
     public function destroy(Ticket $ticket)
     {
-        // just change the status to closed or cancelled.
+        // just change the status to closed or resolved.
     }
 }

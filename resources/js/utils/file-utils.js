@@ -17,3 +17,7 @@ export const formatByteUnits = (bytes) => {
         return `${bytes} byte`;
     }
 };
+
+export const isFileSizeTooLarge = (bytes, maxSizeInMegaBytes) => {
+    return bytes > maxSizeInMegaBytes * (1024 * 1024);
+};

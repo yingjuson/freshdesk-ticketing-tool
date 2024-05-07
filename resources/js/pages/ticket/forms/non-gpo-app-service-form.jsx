@@ -12,6 +12,8 @@ import FormField from "@/components/custom/form-field";
 import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import PhoneInput from "@/components/custom/phone-input";
+import { deviceOSTooltip } from "@/utils/component-utils";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 export default function NonGpoAppServiceForm({
     data,
@@ -63,6 +65,7 @@ export default function NonGpoAppServiceForm({
                     render={
                         <Select
                             id="device_type"
+                            value={data.device_type}
                             onValueChange={(value) => {
                                 setData("device_type", value);
                                 clearErrors("device_type");
@@ -98,6 +101,28 @@ export default function NonGpoAppServiceForm({
                             onChange={(e) => {
                                 setData("device_model", e.target.value);
                                 clearErrors("device_model");
+                            }}
+                        />
+                    }
+                />
+            </div>
+
+            <div className="align-top min-h-20">
+                <FormField
+                    required
+                    label="Device OS version"
+                    htmlFor="device_os_version"
+                    error={errors.device_os_version}
+                    tooltipContent={deviceOSTooltip}
+                    render={
+                        <Input
+                            id="device_os_version"
+                            value={data.device_os_version}
+                            placeholder="ex: 1.6.2 (refer to the tooltip)"
+                            editabledisplaymode={editMode}
+                            onChange={(e) => {
+                                setData("device_os_version", e.target.value);
+                                clearErrors("device_os_version");
                             }}
                         />
                     }

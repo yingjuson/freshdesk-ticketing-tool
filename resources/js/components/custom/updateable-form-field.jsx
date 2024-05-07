@@ -11,7 +11,7 @@ const UpdateableFormField = ({
     return (
         <div className="grid w-full gap-0.5">
             {!hideLabel && (
-                <Label htmlFor={htmlFor} className="leading-5 font-extrabold">
+                <Label htmlFor={htmlFor} className="leading-5 font-bold">
                     {label}
                     {required && (
                         <span className="text-sm text-rose-700 ml-1">*</span>

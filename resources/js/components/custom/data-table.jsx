@@ -145,9 +145,14 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                     </TableHeader>
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
+                            table.getRowModel().rows.map((row, index) => (
                                 <TableRow
                                     key={row.id}
+                                    className={
+                                        (index + 1) % 2 === 0
+                                            ? "bg-slate-100"
+                                            : ""
+                                    }
                                     data-state={
                                         row.getIsSelected() && "selected"
                                     }

@@ -6,40 +6,15 @@ import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import UpdateableFormField from "@/components/custom/updateable-form-field";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Circle, MoreHorizontal } from "lucide-react";
 import { FileDropzone } from "@/components/custom/file-dropzone";
-import { Input } from "@/components/ui/input";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-
-import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { ChevronLeft } from "lucide-react";
 import GpoAppServiceForm from "./forms/gpo-app-service-form";
-import { STATUS_COLORS } from "@/constants/status-constants";
 import { GROUPED_CONCERN_TYPES } from "@/constants/concern-type-constants";
 import NonGpoAppServiceForm from "./forms/non-gpo-app-service-form";
 import WebtoolConcernForm from "./forms/webtool-concern-form";
 import ReportsConcernForm from "./forms/reports-concern-form";
-import OtherRequestForm from "./forms/other-request-form";
 import { useToast } from "@/components/ui/use-toast";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogDescription,
-    DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
 import TicketDetailsHeader from "./ticket-details-header";
 
 export default function ShowEdit({ auth }) {
@@ -65,29 +40,21 @@ export default function ShowEdit({ auth }) {
             : "",
     });
 
-    const {
-        data,
-        setData,
-        errors,
-        put,
-        delete: destroy,
-        clearErrors,
-        transform,
-    } = ticketUpdateForm;
+    const { data, setData, errors, put, clearErrors, processing } =
+        ticketUpdateForm;
 
     const [files, setFiles] = useState(ticket.attachments || []);
 
-    transform((currentTicketData) => {
-        if (files.length > 0) {
-            return currentTicketData;
-        }
-
-        return { ...currentTicketData, attachments: [] };
-    });
+    useEffect(() => {
+        setData("attachments", files);
+    }, [files]);
 
     // TO DO: Add to utils
     const getForm = () => {
-        if (!data.concern_type) {
+        if (
+            !data.concern_type ||
+            data.concern_type === "additional_recipient"
+        ) {
             return null;
         }
 
@@ -120,7 +87,6 @@ export default function ShowEdit({ auth }) {
         put(route("tickets.update", { ticket: ticket.id }), {
             preserveScroll: true,
             onSuccess: () => {
-                // reset();
                 toast({
                     title: "Success",
                     description: "Ticket has been updated.",
@@ -135,17 +101,6 @@ export default function ShowEdit({ auth }) {
                     variant: "destructive",
                 });
             },
-        });
-    };
-
-    const deleteTicket = (e) => {
-        e.preventDefault();
-
-        destroy(route("tickets.destroy", { id: ticket.id }), {
-            preserveScroll: true,
-            onSuccess: () => setIsDeleteModalOpen(false),
-            onError: () => console.error("failed to delete ticket"),
-            onFinish: () => console.log("redirect to index page"),
         });
     };
 
@@ -165,47 +120,16 @@ export default function ShowEdit({ auth }) {
                     </Link>
                     <div className="p-4 bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="flex items-center justify-between">
-                            <div>
-                                {getConcernTypeBadge(ticket.concern_type)}
-                            </div>
+                            {getConcernTypeBadge(ticket.concern_type)}
 
-                            <div className="flex items-center gap-1">
-                                <Button
-                                    type="submit"
-                                    form="update-ticket-form"
-                                    // disabled={!isDirty && !files.length}
-                                    className="p-2 h-6 rounded"
-                                >
-                                    Save changes
-                                </Button>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            className="h-6 w-6 p-0 rounded"
-                                        >
-                                            <span className="sr-only">
-                                                Ticket actions
-                                            </span>
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel className="text-center">
-                                            Actions
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem
-                                            className="justify-center"
-                                            onClick={() =>
-                                                setIsDeleteModalOpen(true)
-                                            }
-                                        >
-                                            Delete
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
+                            <Button
+                                type="submit"
+                                form="update-ticket-form"
+                                disabled={processing}
+                                // disabled={!isDirty && !files.length}
+                            >
+                                Save changes
+                            </Button>
                         </div>
 
                         <form
@@ -214,6 +138,7 @@ export default function ShowEdit({ auth }) {
                             // className="flex flex-col flex-grow"
                         >
                             <TicketDetailsHeader
+                                editMode
                                 ticket={ticket}
                                 {...ticketUpdateForm}
                             />
@@ -226,7 +151,15 @@ export default function ShowEdit({ auth }) {
                                     <TabsTrigger value="details">
                                         <span>Details</span>
                                     </TabsTrigger>
-                                    <TabsTrigger value="attachments">
+                                    <TabsTrigger
+                                        value="attachments"
+                                        className={
+                                            ticket.concern_type ===
+                                            "additional_recipient"
+                                                ? "hidden"
+                                                : ""
+                                        }
+                                    >
                                         <span>Attachments</span>
                                     </TabsTrigger>
                                 </TabsList>
@@ -275,42 +208,6 @@ export default function ShowEdit({ auth }) {
                                 </TabsContent>
                             </Tabs>
                         </form>
-                        <Dialog
-                            open={isDeleteModalOpen}
-                            onOpenChange={setIsDeleteModalOpen}
-                        >
-                            <DialogContent>
-                                {/* <form onSubmit={deleteTicket}> */}
-                                <DialogHeader>
-                                    <DialogTitle>
-                                        Are you sure you want to delete this
-                                        ticket?
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        This action is irreversible. This will
-                                        delete the ticket here in the tool and
-                                        its corresponding ticket in Freshdesk.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter>
-                                    <Button
-                                        variant="outline"
-                                        onClick={() =>
-                                            setIsDeleteModalOpen(false)
-                                        }
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        variant="destructive"
-                                        onClick={deleteTicket}
-                                    >
-                                        Proceed
-                                    </Button>
-                                </DialogFooter>
-                                {/* </form> */}
-                            </DialogContent>
-                        </Dialog>
                     </div>
                 </div>
             </div>

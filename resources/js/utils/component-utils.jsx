@@ -19,11 +19,17 @@ export const getConcernTypeBadge = (concernType) => {
     ];
 
     if (appRelatedConcerns.includes(concernType)) {
-        return <Badge>{KEY_FLATTENED_CONCERN_TYPES[concernType]}</Badge>;
+        return (
+            <Badge variant="blue">
+                {KEY_FLATTENED_CONCERN_TYPES[concernType]}
+            </Badge>
+        );
     }
 
     return (
-        <Badge variant="sky">{KEY_FLATTENED_CONCERN_TYPES[concernType]}</Badge>
+        <Badge variant="indigo">
+            {KEY_FLATTENED_CONCERN_TYPES[concernType]}
+        </Badge>
     );
 };
 
@@ -33,25 +39,23 @@ export const getConcernTypeBadge = (concernType) => {
  * @returns Styled status badge
  */
 export const getStatusBadge = (status) => {
-    let variant = "new";
+    const badgeLabel = status.charAt(0).toUpperCase() + status.slice(1);
 
-    switch (status) {
-        case "new":
-            variant = "new";
-            break;
-        case "in_progress":
-            variant = "inProgress";
-            break;
-        case "cancelled":
-            variant = "secondary";
-            break;
-        case "resolved":
-            variant = "resolved";
-            break;
-    }
-
-    let badgeLabel = status.replace("_", " ");
-    badgeLabel = badgeLabel.charAt(0).toUpperCase() + badgeLabel.slice(1);
-
-    return <Badge variant={variant}>{badgeLabel}</Badge>;
+    return <Badge variant={status}>{badgeLabel}</Badge>;
 };
+
+/**
+ * Returns tooltip on how to get Device OS version
+ */
+export const deviceOSTooltip = (
+    <div className="text-sm">
+        <p>
+            <strong>Android</strong>
+            {": Go to Settings > About Phone > Android version"}
+        </p>
+        <p>
+            <strong>iOS</strong>
+            {": Go to Settings > General > About"}
+        </p>
+    </div>
+);

@@ -89,12 +89,14 @@ export default function ReportsConcernForm({
                             htmlFor="gpo_id"
                             error={errors.gpo_id}
                             render={
-                                <Input
+                                <NumericFormat
                                     id="gpo_id"
                                     value={data.gpo_id}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData("gpo_id", e.target.value);
+                                    decimalScale={0}
+                                    customInput={Input}
+                                    placeholder="ex: 0123456789"
+                                    onValueChange={(values) => {
+                                        setData("gpo_id", values.value);
                                         clearErrors("gpo_id");
                                     }}
                                 />

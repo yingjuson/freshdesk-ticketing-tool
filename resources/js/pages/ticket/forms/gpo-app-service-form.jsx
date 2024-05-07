@@ -14,19 +14,7 @@ import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import PhoneInput from "@/components/custom/phone-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { NumericFormat } from "react-number-format";
-
-const deviceOSTooltip = (
-    <div className="text-sm">
-        <p>
-            <strong>Android</strong>
-            {": Go to Settings > About Phone > Android version"}
-        </p>
-        <p>
-            <strong>iOS</strong>
-            {": Go to Settings > General > About"}
-        </p>
-    </div>
-);
+import { deviceOSTooltip } from "@/utils/component-utils";
 
 export default function GpoAppServiceForm({
     editMode = false,
@@ -39,7 +27,7 @@ export default function GpoAppServiceForm({
 }) {
     const isCustomerMobtelRequired = [
         "cash_in_via_mobtel",
-        "cash_in_via_code",
+        // "cash_in_via_code",
         "cash_out",
         "pa_konsulta",
         "send_load",
@@ -61,7 +49,9 @@ export default function GpoAppServiceForm({
 
     const showCustomerMobtel =
         data.service_type !== "bills_pay" &&
+        data.service_type !== "gpo_insure" &&
         data.service_type !== "dagdag_pondo" &&
+        data.service_type !== "cash_in_via_code" &&
         data.service_type !== "claim_padala";
 
     return (
@@ -158,6 +148,77 @@ export default function GpoAppServiceForm({
                 </div>
             )}
 
+            {data.service_type === "cash_in_via_code" && (
+                <div className="align-top min-h-20">
+                    <FormField
+                        required
+                        label="Cash in code"
+                        htmlFor="cash_in_code"
+                        error={errors.cash_in_code}
+                        render={
+                            <NumericFormat
+                                value={data.cash_in_code}
+                                decimalScale={0}
+                                maxLength={8}
+                                customInput={Input}
+                                placeholder="ex: 12345678 (8 digits)"
+                                onValueChange={(values) => {
+                                    setData("cash_in_code", values.value);
+                                    clearErrors("cash_in_code");
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            )}
+
+            {data.service_type === "bills_pay" && (
+                <>
+                    <div className="align-top min-h-20">
+                        <FormField
+                            required
+                            label="Biller name"
+                            htmlFor="biller_name"
+                            error={errors.biller_name}
+                            render={
+                                <Input
+                                    id="biller_name"
+                                    value={data.biller_name}
+                                    editabledisplaymode={editMode}
+                                    onChange={(e) => {
+                                        setData("biller_name", e.target.value);
+                                        clearErrors("biller_name");
+                                    }}
+                                />
+                            }
+                        />
+                    </div>
+
+                    <div className="align-top min-h-20">
+                        <FormField
+                            required
+                            label="Reference number"
+                            htmlFor="biller_ref_number"
+                            error={errors.biller_ref_number}
+                            render={
+                                <Input
+                                    id="biller_ref_number"
+                                    value={data.biller_ref_number}
+                                    editabledisplaymode={editMode}
+                                    onChange={(e) => {
+                                        setData(
+                                            "biller_ref_number",
+                                            e.target.value
+                                        );
+                                        clearErrors("biller_ref_number");
+                                    }}
+                                />
+                            }
+                        />
+                    </div>
+                </>
+            )}
+
             {data.service_type === "claim_padala" && (
                 <div className="align-top min-h-20">
                     <FormField
@@ -182,30 +243,6 @@ export default function GpoAppServiceForm({
                 </div>
             )}
 
-            {/* TO DO: this is not yet saved. need a new field? */}
-            {data.service_type === "bills_pay" && (
-                <div className="align-top min-h-20">
-                    <FormField
-                        required
-                        label="Reference number"
-                        htmlFor="reference_number"
-                        error={errors.reference_number}
-                        render={
-                            <Input
-                                id="reference_number"
-                                value={data.reference_number}
-                                placeholder="ex: Samsung - Galaxy Z Fold5"
-                                editabledisplaymode={editMode}
-                                onChange={(e) => {
-                                    setData("reference_number", e.target.value);
-                                    clearErrors("reference_number");
-                                }}
-                            />
-                        }
-                    />
-                </div>
-            )}
-
             <div className="align-top min-h-20">
                 <FormField
                     required
@@ -215,6 +252,7 @@ export default function GpoAppServiceForm({
                     render={
                         <Select
                             id="device_type"
+                            defaultValue={data.device_type}
                             onValueChange={(value) => {
                                 setData("device_type", value);
                                 clearErrors("device_type");
@@ -278,32 +316,38 @@ export default function GpoAppServiceForm({
                 />
             </div>
 
-            <div className="align-top min-h-20">
-                <FormField
-                    required
-                    label="Transaction amount"
-                    htmlFor="transaction_amount"
-                    error={errors.transaction_amount}
-                    render={
-                        <NumericFormat
-                            value={data.transaction_amount}
-                            thousandSeparator
-                            decimalScale={2}
-                            customInput={Input}
-                            placeholder="ex: 1250.05"
-                            onValueChange={(values) => {
-                                setData("transaction_amount", values.value);
-                                clearErrors("transaction_amount");
-                            }}
-                        />
-                    }
-                />
-            </div>
+            {data.service_type !== "gpo_insure" && (
+                <div className="align-top min-h-20">
+                    <FormField
+                        required
+                        label="Transaction amount"
+                        htmlFor="transaction_amount"
+                        error={errors.transaction_amount}
+                        render={
+                            <NumericFormat
+                                value={data.transaction_amount}
+                                thousandSeparator
+                                decimalScale={2}
+                                customInput={Input}
+                                placeholder="ex: 1250.05"
+                                onValueChange={(values) => {
+                                    setData("transaction_amount", values.value);
+                                    clearErrors("transaction_amount");
+                                }}
+                            />
+                        }
+                    />
+                </div>
+            )}
 
             <div className="align-top min-h-20">
                 <FormField
                     required
-                    label="Transaction date and time"
+                    label={
+                        data.service_type !== "gpo_insure"
+                            ? "Transaction date and time"
+                            : "Date and Time"
+                    }
                     htmlFor="transaction_datetime"
                     error={errors.transaction_datetime}
                     render={
@@ -326,53 +370,6 @@ export default function GpoAppServiceForm({
                     }
                 />
             </div>
-
-            {data.service_type === "bills_pay" && (
-                <>
-                    <div className="align-top min-h-20">
-                        <FormField
-                            required
-                            label="Biller name"
-                            htmlFor="biller_name"
-                            error={errors.biller_name}
-                            render={
-                                <Input
-                                    id="biller_name"
-                                    value={data.biller_name}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData("biller_name", e.target.value);
-                                        clearErrors("biller_name");
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-
-                    <div className="align-top min-h-20">
-                        <FormField
-                            required
-                            label="Reference number"
-                            htmlFor="biller_ref_number"
-                            error={errors.biller_ref_number}
-                            render={
-                                <Input
-                                    id="biller_ref_number"
-                                    value={data.biller_ref_number}
-                                    editabledisplaymode={editMode}
-                                    onChange={(e) => {
-                                        setData(
-                                            "biller_ref_number",
-                                            e.target.value
-                                        );
-                                        clearErrors("biller_ref_number");
-                                    }}
-                                />
-                            }
-                        />
-                    </div>
-                </>
-            )}
         </>
     );
 }

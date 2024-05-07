@@ -25,15 +25,16 @@ return new class extends Migration
             $table->string('biller_name')->nullable();
             $table->string('biller_ref_number')->nullable();
             $table->string('gpadala_ref_number')->nullable();
+            $table->string('cash_in_code')->nullable();
             $table->string('freshdesk_ticket_number')->nullable();
             $table->float('transaction_amount', 8, 2)->nullable();
             $table->dateTime('transaction_datetime')->nullable();
             $table->enum('status', [
-              'new',
-              'in progress',
+              'open',
+              'pending',
               'resolved',
-              'cancelled'
-            ])->default('new');
+              'closed'
+            ])->default('open');
             $table->string('report_type')->nullable();
             $table->string('gpo_id')->nullable();
             $table->string('ext_transaction_id')->nullable();
@@ -42,8 +43,9 @@ return new class extends Migration
             $table->string('webtool_role')->nullable();
             $table->foreignId('created_by')->constrained(table: 'users')->cascadeOnDelete(); 
             $table->foreignId('assignee_id')->nullable()->constrained(table: 'users');
+
+            $table->dateTime('closed_at')->nullable(); // date and time when ticket was resolved or closed
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

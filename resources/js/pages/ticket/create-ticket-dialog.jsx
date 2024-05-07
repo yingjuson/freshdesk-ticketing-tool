@@ -30,6 +30,9 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { ShieldAlert, RotateCcw } from "lucide-react";
+import { isFileSizeTooLarge } from "@/utils/file-utils";
+import { CustomAlert } from "@/components/custom/custom-alert";
+import { cn } from "@/lib/utils";
 
 export const CreateTicketDialog = ({
     isOpen,
@@ -44,7 +47,7 @@ export const CreateTicketDialog = ({
         processing,
         errors,
         clearErrors,
-        setDefaults,
+        setError,
         reset,
     } = props;
 
@@ -53,14 +56,33 @@ export const CreateTicketDialog = ({
 
     useEffect(() => {
         setData("attachments", files);
+
+        const totalFileSizeInBytes = files.reduce(
+            (accu, { size }) => accu + size,
+            0
+        );
+
+        if (isFileSizeTooLarge(totalFileSizeInBytes, 20)) {
+            setError("attachments", "Total file size exceeds 20MB");
+        } else {
+            if (errors.attachments) {
+                clearErrors("attachments");
+            }
+        }
     }, [files]);
 
     console.log({ errors });
 
     const detailsTabHasError = () => {
         if (errors.length === 0) return false;
-        const { issue_details, subject, ...errorsCopy } = errors;
-        return Object.keys(errorsCopy).length > 0;
+        const { issue_details, subject, attachments, ...remainingErrors } =
+            errors;
+
+        const errorInDetails = Object.keys(remainingErrors).filter(
+            (key) => !key.startsWith("attachment")
+        );
+
+        return errorInDetails.length > 0;
     };
 
     const handleCancelClick = () => {
@@ -161,6 +183,29 @@ export const CreateTicketDialog = ({
         }
     };
 
+    const getTabClass = (tabName) => {
+        let cName = "";
+
+        switch (tabName) {
+            case "attachments":
+                cName = errors.attachments
+                    ? "text-rose-700 data-[state=active]:text-rose-700"
+                    : "";
+                break;
+            case "details":
+                cName = detailsTabHasError()
+                    ? "text-rose-700 data-[state=active]:text-rose-700"
+                    : "";
+                break;
+        }
+
+        if (selectedConcern === "additional_recipient") {
+            cn(cName, "hidden");
+        }
+
+        return cName;
+    };
+
     return (
         <Dialog
             open={isOpen}
@@ -200,14 +245,18 @@ export const CreateTicketDialog = ({
                         />
                     </div>
 
-                    <Tabs defaultValue="details" className="flex flex-col">
+                    <Tabs
+                        defaultValue={
+                            selectedConcern === "additional_recipient"
+                                ? "more-details"
+                                : "details"
+                        }
+                        className="flex flex-col"
+                    >
                         <TabsList className="my-2">
                             <TabsTrigger
                                 value="details"
-                                {...(detailsTabHasError() && {
-                                    className:
-                                        "text-rose-700 data-[state=active]:text-rose-700",
-                                })}
+                                className={getTabClass("details")}
                             >
                                 Details
                             </TabsTrigger>
@@ -226,10 +275,7 @@ export const CreateTicketDialog = ({
 
                             <TabsTrigger
                                 value="attachments"
-                                {...(errors.attachments && {
-                                    className:
-                                        "text-rose-700 data-[state=active]:text-rose-700",
-                                })}
+                                className={getTabClass("attachments")}
                             >
                                 Attachments
                             </TabsTrigger>
@@ -240,7 +286,7 @@ export const CreateTicketDialog = ({
                                 value="details"
                                 className="w-full px-1"
                             >
-                                <div className="grid grid-cols-3 gap-5 h-full">
+                                <div className="grid grid-cols-2 gap-x-10 gap-y-3.5 h-full">
                                     {getForm(selectedConcern)}
                                 </div>
                             </TabsContent>
@@ -281,33 +327,30 @@ export const CreateTicketDialog = ({
                                 value="attachments"
                                 className="flex flex-col justify-center items-center gap-2 px-1"
                             >
-                                {CONCERNS_REQUIRING_ATTACHMENT.includes(
-                                    selectedConcern
-                                ) && (
-                                    <Alert
-                                        variant={
-                                            errors.attachments
-                                                ? "destructive"
-                                                : "warning"
-                                        }
-                                        className="w-5/6 py-2"
-                                    >
-                                        <ShieldAlert size="18" />
-                                        <AlertTitle>
-                                            Attachment required
-                                        </AlertTitle>
-                                        <AlertDescription>
-                                            {
-                                                "Please attach necessary file(s) to your request"
-                                            }
-                                        </AlertDescription>
-                                    </Alert>
+                                {!errors.attachments &&
+                                    CONCERNS_REQUIRING_ATTACHMENT.includes(
+                                        selectedConcern
+                                    ) && (
+                                        <CustomAlert
+                                            variant="warning"
+                                            title="Attachment required"
+                                            description="Please attach necessary file(s)"
+                                        />
+                                    )}
+
+                                {errors.attachments && (
+                                    <CustomAlert
+                                        variant="destructive"
+                                        title="Attachment error"
+                                        description={errors.attachments}
+                                    />
                                 )}
 
                                 <FileDropzone
                                     concernType={data.concern_type}
                                     files={files}
                                     setFiles={setFiles}
+                                    setError={setError}
                                 />
                             </TabsContent>
                         </ScrollArea>
@@ -327,6 +370,7 @@ export const CreateTicketDialog = ({
                             must be filled out before submitting
                         </p>
                     </div>
+
                     <Button
                         variant="ghost"
                         disabled={processing}
@@ -336,6 +380,7 @@ export const CreateTicketDialog = ({
                         <RotateCcw size="16" />
                         Reset all fields
                     </Button>
+
                     <Button
                         type="button"
                         variant="secondary"
@@ -344,10 +389,13 @@ export const CreateTicketDialog = ({
                     >
                         Cancel
                     </Button>
+
                     <Button
                         type="submit"
                         form="create-ticket-form"
-                        disabled={processing}
+                        disabled={
+                            processing || Object.values(errors).length > 0
+                        }
                     >
                         Submit
                     </Button>

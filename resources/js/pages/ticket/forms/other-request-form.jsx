@@ -11,7 +11,7 @@ export default function OtherRequestForm({
     const getPlaceholderText = () => {
         switch (data.concern_type) {
             case "gpo_bulk_distro_transfer":
-                return "Requesting to transfer the following GPOs to _____ Distro";
+                return "Requesting to transfer the following GPOs to *Name of Distro*";
             case "distro_deactivation_request":
                 return "Please provide the following: \n1. Official Entity Name of Distributor for Deactivation \n2. Distributor Code and ID \n3. Location \n4. Reason(s) for deactivation";
             case "gpo_mobtel_remap":
