@@ -13,8 +13,8 @@ import { Combobox } from "@/components/custom/combobox";
 import { GPO_APP_SERVICES } from "@/constants/gpo-app-constants";
 import PhoneInput from "@/components/custom/phone-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
-import { NumericFormat } from "react-number-format";
 import { deviceOSTooltip } from "@/utils/component-utils";
+import NumericInput from "@/components/custom/numeric-input";
 
 export default function GpoAppServiceForm({
     editMode = false,
@@ -156,11 +156,11 @@ export default function GpoAppServiceForm({
                         htmlFor="cash_in_code"
                         error={errors.cash_in_code}
                         render={
-                            <NumericFormat
+                            <NumericInput
                                 value={data.cash_in_code}
                                 decimalScale={0}
                                 maxLength={8}
-                                customInput={Input}
+                                editabledisplaymode={editMode}
                                 placeholder="ex: 12345678 (8 digits)"
                                 onValueChange={(values) => {
                                     setData("cash_in_code", values.value);
@@ -227,11 +227,11 @@ export default function GpoAppServiceForm({
                         htmlFor="gpadala_ref_number"
                         error={errors.gpadala_ref_number}
                         render={
-                            <NumericFormat
+                            <NumericInput
                                 value={data.gpadala_ref_number}
                                 decimalScale={0}
                                 maxLength={13}
-                                customInput={Input}
+                                editabledisplaymode={editMode}
                                 placeholder="ex: 1234567890123 (13 digits)"
                                 onValueChange={(values) => {
                                     setData("gpadala_ref_number", values.value);
@@ -324,12 +324,12 @@ export default function GpoAppServiceForm({
                         htmlFor="transaction_amount"
                         error={errors.transaction_amount}
                         render={
-                            <NumericFormat
+                            <NumericInput
                                 value={data.transaction_amount}
                                 thousandSeparator
                                 decimalScale={2}
-                                customInput={Input}
                                 placeholder="ex: 1250.05"
+                                editabledisplaymode={editMode}
                                 onValueChange={(values) => {
                                     setData("transaction_amount", values.value);
                                     clearErrors("transaction_amount");

@@ -19,29 +19,13 @@ use Inertia\Inertia;
 */
 
 
-
 Route::get('/', function () {
     return Inertia::location('/login');
-    // return Inertia::render('Welcome', [
-    //     'canLogin' => Route::has('login'),
-    //     'canRegister' => Route::has('register')
-    // ]);
 });
-
-// Route::get('/dashboard', function () {
-//     return Inertia::render('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Route::group(['middleware' => ['auth', 'spatie.csp']], function () {
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    //  --> test routes
-    Route::get('/test-dashboard', [TicketController::class, 'test_dashboard_with_ticket_props'])->name('tickets.test_dashboard_with_ticket_props');
-    Route::get('/test-show-tickets', [TicketController::class, 'test_show_with_ticket_attachments'])->name('tickets.test_show_with_ticket_attachments');
-    Route::get('/test-show', [TicketController::class, 'test_show'])->name('tickets.test_show');
-    Route::get('/test-tickets-db', [DashboardController::class, 'test_tickets'])->name('dashboard.test_tickets');
-    // test routes <--
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -55,7 +39,6 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::get('/files', [ReportController::class, 'export'])->name('files.export');
 });
-
 
 
 require __DIR__.'/auth.php';

@@ -20,10 +20,10 @@ export const columns = [
         },
     },
     {
-        accessorKey: "freshdesk_ticket_number",
+        accessorKey: "freshdesk_id",
         header: "Freshdesk ticket",
         cell: ({ row }) => {
-            const fdTicketNumber = row.getValue("freshdesk_ticket_number");
+            const fdTicketNumber = row.getValue("freshdesk_id");
             return (
                 <div className="text-center">
                     <a

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 
 const DashboardCard = ({ title, description, content }) => (
-    <Card className="flex flex-col justify-between bg-purple-100">
+    <Card className="flex flex-col justify-between bg-blue-100">
         <CardHeader>
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>

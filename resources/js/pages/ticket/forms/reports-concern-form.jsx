@@ -1,22 +1,12 @@
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import FormField from "@/components/custom/form-field";
 import { Combobox } from "@/components/custom/combobox";
 import { REPORT_TYPE_SORTED_ASC } from "@/constants/report-constants";
-import { useEffect, useState } from "react";
-import { FileDropzone } from "@/components/custom/file-dropzone";
+import { useEffect } from "react";
 import { NumericFormat } from "react-number-format";
 import PhoneInput from "@/components/custom/phone-input";
+import NumericInput from "@/components/custom/numeric-input";
 
 export default function ReportsConcernForm({
     data,
@@ -148,11 +138,11 @@ export default function ReportsConcernForm({
                             htmlFor="transaction_amount"
                             error={errors.transaction_amount}
                             render={
-                                <NumericFormat
+                                <NumericInput
                                     value={data.transaction_amount}
                                     thousandSeparator
                                     decimalScale={2}
-                                    customInput={Input}
+                                    editabledisplaymode={editMode}
                                     placeholder="ex: 1250.05"
                                     onValueChange={(values) => {
                                         setData(

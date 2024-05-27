@@ -108,7 +108,7 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                                             column.toggleVisibility(!!value)
                                         }
                                     >
-                                        {column.id}
+                                        {column.id.replaceAll("_", " ")}
                                     </DropdownMenuCheckboxItem>
                                 );
                             })}
@@ -173,7 +173,7 @@ export function DataTable({ columns, data, links: paginationLinks }) {
                                     colSpan={columns.length}
                                     className="h-24 text-center"
                                 >
-                                    No results.
+                                    No results
                                 </TableCell>
                             </TableRow>
                         )}

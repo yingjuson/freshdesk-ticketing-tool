@@ -106,7 +106,7 @@ export const CONCERN_TYPES = [
 export const CONCERNS_REQUIRING_ATTACHMENT = [
     "gpo_bulk_distro_transfer",
     "distro_mapping_update",
-    "gpo_app_service",
+    // "gpo_app_service",
     "data_request",
 ];
 

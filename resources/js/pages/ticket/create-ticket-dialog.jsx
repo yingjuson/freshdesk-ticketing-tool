@@ -200,7 +200,7 @@ export const CreateTicketDialog = ({
         }
 
         if (selectedConcern === "additional_recipient") {
-            cn(cName, "hidden");
+            cName = cn(cName, "hidden");
         }
 
         return cName;
@@ -269,7 +269,9 @@ export const CreateTicketDialog = ({
                                             "text-rose-700 data-[state=active]:text-rose-700",
                                     })}
                                 >
-                                    More Details
+                                    {selectedConcern === "additional_recipient"
+                                        ? "Details"
+                                        : "More Details"}
                                 </TabsTrigger>
                             )}
 

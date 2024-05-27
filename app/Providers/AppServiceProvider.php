@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\TicketService;
 use Illuminate\Support\ServiceProvider;
 use \Illuminate\Support\Facades\URL;
 
@@ -12,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(TicketService::class, function ($app) {
+            return new TicketService();
+        });
     }
 
     /**

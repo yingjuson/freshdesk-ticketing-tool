@@ -26,7 +26,7 @@ class Ticket extends Model
         'gpo_mobile_number',
         'biller_name',
         'biller_ref_number',
-        'freshdesk_ticket_number',
+        'freshdesk_id',
         'gpadala_ref_number',
         'transaction_amount',
         'transaction_datetime',

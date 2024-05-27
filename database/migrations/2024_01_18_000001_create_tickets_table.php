@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('biller_ref_number')->nullable();
             $table->string('gpadala_ref_number')->nullable();
             $table->string('cash_in_code')->nullable();
-            $table->string('freshdesk_ticket_number')->nullable();
+            $table->string('freshdesk_id')->nullable();
             $table->float('transaction_amount', 8, 2)->nullable();
             $table->dateTime('transaction_datetime')->nullable();
             $table->enum('status', [
@@ -41,9 +41,8 @@ return new class extends Migration
             $table->string('report_date')->nullable();
             $table->string('portal_type')->nullable();
             $table->string('webtool_role')->nullable();
-            $table->foreignId('created_by')->constrained(table: 'users')->cascadeOnDelete(); 
-            $table->foreignId('assignee_id')->nullable()->constrained(table: 'users');
-
+            $table->string('freshdesk_assignee')->nullable();
+            $table->foreignId('created_by')->constrained(table: 'users')->cascadeOnDelete();
             $table->dateTime('closed_at')->nullable(); // date and time when ticket was resolved or closed
             $table->timestamps();
         });

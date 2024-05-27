@@ -25,8 +25,7 @@ export const FileExport = () => (
                 <div className="space-y-2">
                     <h3 className="font-medium leading-none">Data export</h3>
                     <p className="text-sm text-muted-foreground">
-                        Select the date range and the fields you wish to
-                        include.
+                        Select the date range
                     </p>
                 </div>
                 <form

@@ -9,20 +9,17 @@ class Attachment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ticket_id', 'filename', 'mime_type', 'file_dir'];
-
-    protected $appends = [
-        'full_path'
+    protected $fillable = [
+        'ticket_id',
+        'freshdesk_id',
+        'name',
+        'content_type',
+        'size',
+        'attachment_url'
     ];
 
     public function ticket()
     {
         return $this->belongsTo(Ticket::class);
-    }
-
-    // Accessor method to append storage path to filename attribute
-    public function getFullPathAttribute()
-    {
-        return storage_path('app/' . $this->filename);
     }
 }

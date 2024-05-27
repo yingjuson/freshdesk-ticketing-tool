@@ -73,7 +73,7 @@ export const Combobox = ({
                     <ScrollArea className="h-52 scroll-auto ">
                         <CommandEmpty>Nothing found.</CommandEmpty>
                         <CommandGroup>
-                            {options.map((option) => (
+                            {options?.map((option) => (
                                 <CommandItem
                                     key={option.value}
                                     value={option.value}

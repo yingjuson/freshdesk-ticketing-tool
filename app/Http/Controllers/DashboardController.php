@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use App\Models\Ticket;
-use Illuminate\Http\Request;
-
 
 class DashboardController extends Controller
 {
@@ -34,24 +32,6 @@ class DashboardController extends Controller
             'resolvedTicketsThisWeek'   => $resolved_tickets_this_week,
             'pendingTickets'            => $pending_tickets,
             'unassignedTickets'         => $unassigned_tickets,
-        ]);
-    }
-
-    public function test_tickets(Request $request)
-    {
-        $tickets = Ticket::query()
-            ->when($request->input('search'), function ($query, $search) {
-                $query->where('subject', 'like', '%' . $search . '%')
-                ->orWhere('concern_type', 'like', '%' . $search . '%')
-                ->orWhere('id', 'like', '%' . $search . '%');
-            })
-            ->with('creator')
-            ->orderBy("created_at", 'desc')
-            ->paginate(10)
-            ->withQueryString();
-
-        return Inertia::render('ticket/index', [
-          'tickets' => $tickets
         ]);
     }
 }

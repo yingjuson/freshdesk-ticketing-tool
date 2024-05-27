@@ -2,21 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Ticket;
+use GuzzleHttp\Client;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Models\Attachment;
+use App\Services\TicketService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use App\Models\Ticket;
-use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Support\Facades\Auth;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Redirect;
-
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
+use Symfony\Component\HttpFoundation\Response;
 
 class TicketController extends Controller
 {
+    protected $ticketService;
+    protected $freshdeskClient;
+
+    const PRIORITY = [
+        'low'       => 1,
+        'medium'    => 2,
+        'high'      => 3,
+        'urgent'    => 4,
+    ];
+
+    const STATUS = [
+        'open'      => 2,
+        'pending'   => 3,
+        'resolved'  => 4,
+        'closed'    => 5,
+    ];
+
+    public function __construct(TicketService $ticketService)
+    {
+        $this->freshdeskClient = new Client([
+            'base_uri' => "https://" . env('FRESHDESK_DOMAIN') . ".freshdesk.com/api/v2/",
+            'headers' => [
+                'Authorization' => 'Basic ' . base64_encode(env('FRESHDESK_API_KEY') . ':X'),
+                'Content-Type' => 'multipart/form-data',
+                'Accept' => 'application/json',
+            ]
+        ]);
+
+        $this->ticketService = $ticketService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -38,83 +69,21 @@ class TicketController extends Controller
         ]);
     }
 
-    public function test_dashboard_with_ticket_props(Request $request)
-    {
-        $tickets = Ticket::query()
-            ->when($request->input('search'), function ($query, $search) {
-                $query->where('subject', 'like', '%' . $search . '%')
-                ->orWhere('concern_type', 'like', '%' . $search . '%')
-                ->orWhere('id', 'like', '%' . $search . '%');
-            })
-            ->with('creator')
-            ->orderBy("created_at", 'desc')
-            ->paginate(10)
-            ->withQueryString();
-
-        return Inertia::render('dashboard', [
-          'tickets' => $tickets
-        ]);
-    }
-
-    public function test_show_with_ticket_attachments(Ticket $ticket)
-    {
-        $ticket->load('attachments');
-
-        return Inertia::render('ticket/test-show', [
-          'ticket' => $ticket
-        ]);
-    }
-
-    public function test_show(Ticket $ticket)
-    {
-        return Inertia::render('ticket/test-show', [
-          'ticket' => $ticket
-        ]);
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreTicketRequest $request)
     {
-        $payload = $request->validated();
         $user = Auth::user();
-
-        $DO_NOT_POST = false;
-
-        $client = new Client([
-            'base_uri' => "https://" . env('FRESHDESK_DOMAIN') . ".freshdesk.com/api/v2/",
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode(env('FRESHDESK_API_KEY') . ':X'),
-                'Content-Type' => 'multipart/form-data',
-                'Accept' => 'application/json',
-            ]
-        ]);
+        $payload = $request->validated();
 
         DB::beginTransaction();
 
         try {
-            $attachments = [];
             $freshdeskAttachments = [];
 
             if ($request->hasFile('attachments')) {
                 foreach ($request->file('attachments') as $attachment) {
-                    // store files in the database
-                    // $ticket->attachments()->create([
-                    //     // 'filename' => $attachment->store('attachments', 'public'),
-                    //     'filename' => $attachment->getClientOriginalName(),
-                    //     'mime_type' => $attachment->getClientMimeType(),
-                    //     'file_dir' => $attachment->store('public_attachments', 'public'),
-                    // ]);
-
-                    $attachments[] = [
-                        // 'filename' => $attachment->store('attachments', 'public'),
-                        'filename' => $attachment->getClientOriginalName(),
-                        'mime_type' => $attachment->getClientMimeType(),
-                        // 'file_dir' => $attachment->store('public'),
-                        'file_dir' => '',
-                    ];
-
                     $freshdeskAttachments[] = [
                         'file_name' => $attachment->getClientOriginalName(),
                         'file' => file_get_contents($attachment->getRealPath()),
@@ -122,41 +91,47 @@ class TicketController extends Controller
                 }
             }
 
-            $custom_fields = [
-                'portal type' => $request->input('portal_type'),
-                'role' => $request->input('webtool_role')
-            ];
+            $formattedDescription = $this->ticketService->formatDescription($payload);
 
-            $description = '';
-
-            foreach ($payload as $key => $value) {
-                if ($key != 'attachments' && $key != 'issue_details' && !!$value) {
-                    $new_value = $value;
-                    $new_key = str_replace(' ', '_', $key);
-
-                    if ($key == 'concern_type') {
-                        $new_value = ucwords(str_replace(' ', '_', $value));
-                    }
-
-                    $description .= '<b>' . $new_key . '</b>: ' . $new_value . "<br />";
-                }
-            }
-
-            $description .= "<br /><br />-- additional details --<br /><br />" . $request->input('issue_details');
-
-            // Prepare ticket data
-            $freshdeskTicketData = [
+            $freshdeskPayload = [
                 'subject' => $request->input('subject'),
-                'description' => $description,
+                'description' => $formattedDescription,
                 'attachments' => $freshdeskAttachments,
                 'email' => $user->email,
-                "priority" => 1,
-                "status" => 2,
+                "priority" => self::PRIORITY['low'],
+                "status" => self::STATUS['open'],
             ];
 
-            if ($DO_NOT_POST) {
+            $attachments = [];
+
+            // Send ticket creation request to Freshdesk
+            $response = $this->freshdeskClient->post('tickets', [
+                'multipart' => $this->ticketService->buildMultipartData($freshdeskPayload),
+            ]);
+
+            if ($response->getStatusCode() === Response::HTTP_CREATED) {
+                $responseData = json_decode($response->getBody(), true);
+
+                // keep a copy of the Freshdesk ticket number
+                $payload['freshdesk_id'] = $responseData['id'];
                 $payload['created_by'] = $user->id;
+
                 $ticket = Ticket::create($payload);
+
+                /**
+                 * Instead of using our own S3 Bucket to store the same files as what we have uploaded
+                 * to Freshdesk, let's just store the basic attachment details and keep a reference to
+                 * the attachment uploaded to Freshdesk
+                 */
+                foreach ($responseData['attachments'] as $fdAttachment) {
+                    $attachments[] = [
+                        'freshdesk_id' => $fdAttachment['id'],
+                        'name' => $fdAttachment['name'],
+                        'size' => $fdAttachment['size'],
+                        'content_type' => $fdAttachment['content_type'],
+                        'attachment_url' => $fdAttachment['attachment_url'],
+                    ];
+                }
 
                 $ticket->attachments()->createMany($attachments);
                 
@@ -164,30 +139,11 @@ class TicketController extends Controller
 
                 return Redirect::route('tickets.index');
             } else {
-                // Send request
-                $response = $client->post('tickets', [
-                    'multipart' => $this->buildMultipartData($freshdeskTicketData),
-                ]);
-
-                if ($response->getStatusCode() === 201) {
-                    $responseData = json_decode($response->getBody(), true);
-                    // create Ticket here with Freshdesk Ticket number
-                    $payload['freshdesk_ticket_number'] = $responseData['id'];
-                    $payload['created_by'] = $user->id;
-                    $ticket = Ticket::create($payload);
-
-                    $ticket->attachments()->createMany($attachments);
-                    
-                    DB::commit();
-
-                    return Redirect::route('tickets.index');
-                } else {
-                    throw new \Exception();
-                }
+                throw new \Exception();
             }
-
             
         } catch (\Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             return redirect()->back()->withErrors([
                 'create' => "An error occurred while performing this request."
@@ -195,29 +151,6 @@ class TicketController extends Controller
         }
     }
 
-    private function buildMultipartData(array $data)
-    {
-        $multipart = [];
-
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $item) {
-                    $multipart[] = [
-                        'name' => $key . '[]',
-                        'contents' => $item['file'],
-                        'filename' => $item['file_name']
-                    ];
-                }
-            } else {
-                $multipart[] = [
-                    'name' => $key,
-                    'contents' => $value
-                ];
-            }
-        }
-
-        return $multipart;
-    }
 
     /**
      * Display the specified resource.
@@ -234,10 +167,56 @@ class TicketController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreTicketRequest $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, Ticket $ticket)
     {
         try {
             $validatedRequest = $request->validated();
+
+            $new_attachments = [];
+            $existing_attachments = [];
+            
+            DB::beginTransaction();
+
+            if ($request->has('existing_attachments')) {
+                $existing_attachments = $validatedRequest['existing_attachments'];
+            }
+
+            // handle new attachments (adding)
+            if ($request->hasFile('new_attachments')) {
+                foreach ($request->file('new_attachments') as $attachment) {
+                    $new_attachments[] = [
+                        'file_name' => $attachment->getClientOriginalName(),
+                        'file' => file_get_contents($attachment->getRealPath()),
+                    ];
+                }
+            }
+            
+            // handle removing/deleting of attachments from our database
+            $attachment_ids_to_be_removed = $ticket->attachments()->pluck('id')->diff(collect($existing_attachments));
+
+            // handle removing/deleting of attachments from Freshdesk
+            $attachment_models_for_removal = Attachment::findMany($attachment_ids_to_be_removed);
+            
+            // dd($attachment_models_for_removal, $attachment_ids_to_be_removed);
+
+            foreach ($attachment_models_for_removal as $attachment_model) {
+                // dd('here');
+                $response = $this->freshdeskClient->delete("attachments/{$attachment_model->freshdesk_id}");
+                if ($response->getStatusCode() != Response::HTTP_NO_CONTENT) {
+                    throw new \Exception("Failed to delete attachment id {$attachment_model->freshdesk_id} in Freshdesk");
+                }
+            }
+            
+            $ticket->attachments()->whereIn('id', $attachment_ids_to_be_removed)->delete();
+
+            // dd($new_attachments, $existing_attachments);
+
+            $freshdeskPayload = [
+                'status' => self::STATUS[$validatedRequest['status']],
+                'subject' => $validatedRequest['subject'],
+                'description' => $this->ticketService->formatDescription($validatedRequest),
+                'attachments' => $new_attachments // only pass the new attachments; this will be uploaded on top of the existing ones in Freshdesk
+            ];
 
             if ($validatedRequest['status'] == 'resolved' || $validatedRequest['status'] == 'closed') {
                 $validatedRequest['closed_at'] = now();
@@ -245,23 +224,53 @@ class TicketController extends Controller
                 $validatedRequest['closed_at'] = NULL;
             }
 
+            // send update ticket request to Freshdesk
+            $response = $this->freshdeskClient->put('tickets/' . intval($ticket->freshdesk_id), [
+                'multipart' => $this->ticketService->buildMultipartData($freshdeskPayload),
+            ]);
+
+            if ($response->getStatusCode() != Response::HTTP_OK) {
+                throw new \Exception('Failed to update ticket in Freshdesk');
+            }
+
+            $responseData = json_decode($response->getBody(), true);
+
+            $attachments = [];
+
+            /**
+             * Instead of using our own S3 Bucket to store the same files as what we have uploaded
+             * to Freshdesk, let's just store the basic attachment details and keep a reference to
+             * the attachment uploaded to Freshdesk
+             */
+            foreach ($responseData['attachments'] as $fdAttachment) {
+                if (!Attachment::where('freshdesk_id', $fdAttachment['id'])->exists()) {
+                    $attachments[] = [
+                        'name' => $fdAttachment['name'],
+                        'size' => $fdAttachment['size'],
+                        'freshdesk_id' => $fdAttachment['id'],
+                        'content_type' => $fdAttachment['content_type'],
+                        'attachment_url' => $fdAttachment['attachment_url'],
+                    ];
+                }
+            }
+
+            $ticket->attachments()->createMany($attachments);
+
             $ticket->update($validatedRequest);
+            
+            DB::commit();
 
             return Redirect::route('tickets.show', [
                 'ticket' => $ticket
             ]);
+
         } catch (\Exception $e) {
+            dd($e->getMessage());   
+            DB::rollBack();
+
             return redirect()->back()->withErrors([
                 'update' => "An error occurred while updating the ticket."
             ]);
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ticket $ticket)
-    {
-        // just change the status to closed or resolved.
     }
 }

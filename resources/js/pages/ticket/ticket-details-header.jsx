@@ -22,7 +22,7 @@ const TicketDetailsHeader = ({
 }) => (
     <>
         <div className="flex items-center">
-            <span className="font-bold">{`#${ticket.id}`}</span>
+            <span className="font-semibold">{`#${ticket.id}`}</span>
             <UpdateableFormField
                 required
                 hideLabel={true}
@@ -34,7 +34,7 @@ const TicketDetailsHeader = ({
                         id="subject"
                         editabledisplaymode
                         value={data.subject}
-                        className="ml-2 my-3 font-bold text-base"
+                        className="ml-2 my-3 font-semibold text-base"
                         onChange={(e) => {
                             setData("subject", e.target.value);
                             clearErrors("subject");

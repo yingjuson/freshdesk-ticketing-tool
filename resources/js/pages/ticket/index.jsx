@@ -74,7 +74,7 @@ export default function TicketIndex({ auth }) {
 
             <div className="py-6">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="p-6 bg-white overflow-scroll shadow-sm sm:rounded-lg">
+                    <div className="p-6 bg-white shadow-sm sm:rounded-lg">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button>New Ticket</Button>
