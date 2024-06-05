@@ -109,7 +109,7 @@ export const CreateTicketDialog = ({
             "transaction_amount",
             "transaction_datetime",
             "created_by",
-            "assignee_id",
+            "freshdesk_assignee",
             "webtool_role",
             "portal_type",
             "report_type",

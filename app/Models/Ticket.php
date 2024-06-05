@@ -32,7 +32,7 @@ class Ticket extends Model
         'transaction_datetime',
         'status',
         'created_by',
-        'assignee_id',
+        'freshdesk_assignee',
         'portal_type',
         'webtool_role',
         'report_type',

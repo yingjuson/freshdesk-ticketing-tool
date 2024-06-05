@@ -25,7 +25,7 @@ class DashboardController extends Controller
 
         $pending_tickets = Ticket::where('status', 'pending')->count();
 
-        $unassigned_tickets = Ticket::whereNull('assignee_id')->count();
+        $unassigned_tickets = Ticket::whereNull('freshdesk_assignee')->count();
 
         return Inertia::render('dashboard', [
             'newTicketsThisWeek'        => $new_tickets_this_week,
