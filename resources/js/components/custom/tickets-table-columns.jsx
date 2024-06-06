@@ -28,7 +28,7 @@ export const columns = [
                 <div className="text-center">
                     <a
                         className="text-blue-500"
-                        href={`https://j6w.freshdesk.com/a/tickets/${fdTicketNumber}`}
+                        href={`https://reiztech.freshdesk.com/a/tickets/${fdTicketNumber}`}
                         target="_blank"
                     >
                         {fdTicketNumber}
